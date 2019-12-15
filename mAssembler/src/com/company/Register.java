@@ -1,9 +1,12 @@
 package com.company;
 
 public class Register {
-    long value = 0;
-
-    public long getNumber() {
+    int value;
+    public Register(){
+        //Sets the value to zero whenever an instance is initialized.
+        setNumber(0);
+    }
+    public int getNumber() {
         return this.value;
     }
 

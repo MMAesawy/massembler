@@ -20,18 +20,52 @@ public class Massembler {
 
         return rs.value < rt.value ? 1:0;
     }
-    public long and(Register rd, Register rs, Register rt){
+    public int and(Register rd, Register rs, Register rt){
         rd.value = 0;
         if(rs.value == rt.value && rs.value != 0)
             rd.value = 1;
         return  rd.value;
     }
-    public long or(Register rd, Register rs, Register rt){
+    public int slti(Register rs, int imm){
+
+        return rs.value < imm ? 1:0;
+    }
+    public int or(Register rd, Register rs, Register rt){
 
         rd.value = 0;
         if(rs.value == 1 || rt.value == 1)
             rd.value = 1;
         return rd.value;
+    }
+
+    public void addi(Register rd, Register rs, int imm){
+
+        rd.value = rs.value + imm;
+    }
+    public void subi(Register rd, Register rs, int imm){
+
+        rd.value = rs.value - imm;
+    }
+
+    public int andi(Register rd, Register rs, int imm){
+
+        rd.value = 0;
+        if(rs.value == imm && rs.value != 0)
+            rd.value = 1;
+        return  rd.value;
+    }
+    public int ori(Register rd, Register rs, int imm){
+
+        rd.value = 0;
+        if(rs.value == 1 || imm == 1)
+            rd.value = 1;
+        return rd.value;
+    }
+    public void lw(Register rs, int address){
+
+    }
+    public void sw(Register rs, int address){
+
     }
 
 }
