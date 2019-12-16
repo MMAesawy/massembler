@@ -38,7 +38,6 @@ public class Massembler {
         }
         else
             d.setValue(0);
-
     }
 
     public void and(Register rd, Register rs, Register rt){

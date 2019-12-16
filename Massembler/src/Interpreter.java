@@ -1,13 +1,8 @@
 import grammar.Absyn.*;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.regex.Pattern;
-import java_cup.runtime.*;
+
 import grammar.*;
-import grammar.Absyn.*;
-import java.io.*;
 
 /*** BNFC-Generated Visitor Design Pattern Skeleton. ***/
 /* This implements the common visitor design pattern.
@@ -27,6 +22,16 @@ public class Interpreter
     private PrintStream outputStream;
     private PrintStream errorStream;
     private grammar.Absyn.Program parsedProgram;
+
+    private char type = ' ';
+    private String opcode = "000000";
+    private String funct = "";
+    private String register1 = "";
+    private String register2 = "";
+    private String register3 = "";
+    private int immediate = 0;
+    private int destination = 0;
+    private int prevProgCount = 0;
 
     public Interpreter(Massembler ass, InputStreamReader in) throws IOException{
         this(ass, in, null, null);
@@ -85,12 +90,20 @@ public class Interpreter
         counterMax = preprocessor.pcToFc.size() + 1; // assuming pcToFc extends to end of program
     }
 
-    public char getInstructionType(int instructionNumber){
-        return preprocessor.instructionTypes.get(instructionNumber);
-    }
+    //public char getInstructionType(int instructionNumber){
+    //    return preprocessor.instructionTypes.get(instructionNumber);
+    //}
 
     public int getLineNumber(int instructionNumber){
         return preprocessor.pcToFc.get(instructionNumber);
+    }
+
+    public int getLineNumber(){
+        return getLineNumber(assembler.programCounter);
+    }
+
+    public int getPrevLineNumber(){
+        return getLineNumber(getPrevProgCount());
     }
 
     public boolean ready(){
@@ -117,6 +130,44 @@ public class Interpreter
         single = false;
     }
 
+    public char getType() {
+        return type;
+    }
+    public String getOpcode() {
+        return opcode;
+    }
+    public String getFunct() {
+        return funct;
+    }
+    public String getR1() {
+        return register1;
+    }
+    public String getR2() {
+        return register2;
+    }
+    public String getR3() {
+        return register3;
+    }
+    public int getImm() {
+        return immediate;
+    }
+    public int getDest() {
+        return destination;
+    }
+    public int getPrevProgCount() {
+        return prevProgCount;
+    }
+
+    private void resetInfo(){
+        type = ' ';
+        opcode = "000000";
+        funct = "";
+        register1 = "";
+        register2 = "";
+        register3 = "";
+        immediate = 0;
+        destination = 0;
+    }
 
     public class ProgramVisitor implements Program.Visitor<String,Object>
     {
@@ -124,6 +175,8 @@ public class Interpreter
         { /* Code For PDefs Goes Here */
             while (assembler.programCounter < counterMax)
             {
+                resetInfo();
+                prevProgCount = assembler.programCounter;
                 p.liststmt_.get(assembler.programCounter).accept(new StmtVisitor(), arg);
                 if (single) break;
             }
@@ -214,6 +267,10 @@ public class Interpreter
             Register r1 = assembler.registers[Register.lookup(p.reg_1)];
             Register r2 = assembler.registers[Register.lookup(p.reg_2)];
             Register r3 = assembler.registers[Register.lookup(p.reg_3)];
+            register1 = p.reg_1;
+            register2 = p.reg_2;
+            register3 = p.reg_3;
+            funct = "100000";
             assembler.add(r1, r2, r3);
             return null;
         }    public String visit(grammar.Absyn.ESub p, Object arg)
@@ -224,6 +281,10 @@ public class Interpreter
         Register r1 = assembler.registers[Register.lookup(p.reg_1)];
         Register r2 = assembler.registers[Register.lookup(p.reg_2)];
         Register r3 = assembler.registers[Register.lookup(p.reg_3)];
+        register1 = p.reg_1;
+        register2 = p.reg_2;
+        register3 = p.reg_3;
+        funct = "100011";
         assembler.sub(r1, r2, r3);
         return null;
     }    public String visit(grammar.Absyn.EAnd p, Object arg)
@@ -234,6 +295,10 @@ public class Interpreter
         Register r1 = assembler.registers[Register.lookup(p.reg_1)];
         Register r2 = assembler.registers[Register.lookup(p.reg_2)];
         Register r3 = assembler.registers[Register.lookup(p.reg_3)];
+        register1 = p.reg_1;
+        register2 = p.reg_2;
+        register3 = p.reg_3;
+        funct = "100001";
         assembler.and(r1, r2, r3);
         return null;
     }    public String visit(grammar.Absyn.EOr p, Object arg)
@@ -244,6 +309,10 @@ public class Interpreter
         Register r1 = assembler.registers[Register.lookup(p.reg_1)];
         Register r2 = assembler.registers[Register.lookup(p.reg_2)];
         Register r3 = assembler.registers[Register.lookup(p.reg_3)];
+        register1 = p.reg_1;
+        register2 = p.reg_2;
+        register3 = p.reg_3;
+        funct = "100101";
         assembler.or(r1, r2, r3);
         return null;
     }    public String visit(grammar.Absyn.ESll p, Object arg)
@@ -254,6 +323,10 @@ public class Interpreter
         int imm = p.imm_.accept(new ImmVisitor(), arg);
         Register r1 = assembler.registers[Register.lookup(p.reg_1)];
         Register r2 = assembler.registers[Register.lookup(p.reg_2)];
+        register1 = p.reg_1;
+        register2 = p.reg_2;
+        funct = "000000";
+        immediate = imm;
         assembler.sll(r1, r2, imm);
         return null;
     }    public String visit(grammar.Absyn.ESrl p, Object arg)
@@ -264,6 +337,10 @@ public class Interpreter
         int imm = p.imm_.accept(new ImmVisitor(), arg);
         Register r1 = assembler.registers[Register.lookup(p.reg_1)];
         Register r2 = assembler.registers[Register.lookup(p.reg_2)];
+        register1 = p.reg_1;
+        register2 = p.reg_2;
+        funct = "000010";
+        immediate = imm;
         assembler.srl(r1, r2, imm);
         return null;
     }    public String visit(grammar.Absyn.ESlt p, Object arg)
@@ -275,12 +352,18 @@ public class Interpreter
         Register r1 = assembler.registers[Register.lookup(p.reg_1)];
         Register r2 = assembler.registers[Register.lookup(p.reg_2)];
         Register r3 = assembler.registers[Register.lookup(p.reg_3)];
+        register1 = p.reg_1;
+        register2 = p.reg_2;
+        register3 = p.reg_3;
+        funct = "101010";
         assembler.slt(r1, r2, r3);
         return null;
     }    public String visit(grammar.Absyn.EJr p, Object arg)
     { /* Code For EJr Goes Here */
         //p.reg_;
         Register r1 = assembler.registers[Register.lookup(p.reg_)];
+        register1 = p.reg_;
+        funct = "001000";
         assembler.jr(r1);
         return null;
     }
@@ -295,6 +378,10 @@ public class Interpreter
             int imm = p.imm_.accept(new ImmVisitor(), arg);
             Register r1 = assembler.registers[Register.lookup(p.reg_1)];
             Register r2 = assembler.registers[Register.lookup(p.reg_2)];
+            register1 = p.reg_1;
+            register2 = p.reg_2;
+            immediate = imm;
+            opcode = "001000";
             assembler.addi(r1, r2, imm);
             return null;
         }    public String visit(grammar.Absyn.EOri p, Object arg)
@@ -305,6 +392,10 @@ public class Interpreter
         int imm = p.imm_.accept(new ImmVisitor(), arg);
         Register r1 = assembler.registers[Register.lookup(p.reg_1)];
         Register r2 = assembler.registers[Register.lookup(p.reg_2)];
+        register1 = p.reg_1;
+        register2 = p.reg_2;
+        immediate = imm;
+        opcode = "001101";
         assembler.ori(r1, r2, imm);
         return null;
     }    public String visit(grammar.Absyn.EAndi p, Object arg)
@@ -315,6 +406,10 @@ public class Interpreter
         int imm = p.imm_.accept(new ImmVisitor(), arg);
         Register r1 = assembler.registers[Register.lookup(p.reg_1)];
         Register r2 = assembler.registers[Register.lookup(p.reg_2)];
+        register1 = p.reg_1;
+        register2 = p.reg_2;
+        immediate = imm;
+        opcode = "001100";
         assembler.andi(r1, r2, imm);
         return null;
     }    public String visit(grammar.Absyn.ESlti p, Object arg)
@@ -325,6 +420,10 @@ public class Interpreter
         int imm = p.imm_.accept(new ImmVisitor(), arg);
         Register r1 = assembler.registers[Register.lookup(p.reg_1)];
         Register r2 = assembler.registers[Register.lookup(p.reg_2)];
+        register1 = p.reg_1;
+        register2 = p.reg_2;
+        immediate = imm;
+        opcode = "001010";
         assembler.slti(r1, r2, imm);
         return null;
     }    public String visit(grammar.Absyn.EBne p, Object arg)
@@ -333,9 +432,14 @@ public class Interpreter
         //p.reg_2;
 
         int pntr = p.pcpntr_.accept(new PCPntrVisitor(), arg);
+        int dest = pntr - assembler.programCounter;
         Register r1 = assembler.registers[Register.lookup(p.reg_1)];
         Register r2 = assembler.registers[Register.lookup(p.reg_2)];
-        assembler.bne(r1, r2, pntr - assembler.programCounter);
+        register1 = p.reg_1;
+        register2 = p.reg_2;
+        destination = dest;
+        opcode = "000101";
+        assembler.bne(r1, r2, dest);
         return null;
     }    public String visit(grammar.Absyn.EBeq p, Object arg)
     { /* Code For EBeq Goes Here */
@@ -343,9 +447,14 @@ public class Interpreter
         //p.reg_2;
 
         int pntr = p.pcpntr_.accept(new PCPntrVisitor(), arg);
+        int dest = pntr - assembler.programCounter;
         Register r1 = assembler.registers[Register.lookup(p.reg_1)];
         Register r2 = assembler.registers[Register.lookup(p.reg_2)];
-        assembler.beq(r1, r2, pntr - assembler.programCounter);
+        register1 = p.reg_1;
+        register2 = p.reg_2;
+        destination = dest;
+        opcode = "000100";
+        assembler.beq(r1, r2, dest);
         return null;
     }    public String visit(grammar.Absyn.ELui p, Object arg)
     { /* Code For ELui Goes Here */
@@ -353,6 +462,9 @@ public class Interpreter
 
         int imm = p.imm_.accept(new ImmVisitor(), arg);
         Register r1 = assembler.registers[Register.lookup(p.reg_)];
+        register1 = p.reg_;
+        immediate = imm;
+        opcode = "001111";
         assembler.lui(r1, imm);
         return null;
     }    public String visit(grammar.Absyn.ESw p, Object arg)
@@ -361,6 +473,9 @@ public class Interpreter
 
         int addr = p.addr_.accept(new AddrVisitor(), arg);
         Register r1 = assembler.registers[Register.lookup(p.reg_)];
+        register1 = p.reg_;
+        immediate = addr;
+        opcode = "101011";
         assembler.sw(r1, addr);
         return null;
     }    public String visit(grammar.Absyn.ELw p, Object arg)
@@ -369,6 +484,9 @@ public class Interpreter
 
         int addr = p.addr_.accept(new AddrVisitor(), arg);
         Register r1 = assembler.registers[Register.lookup(p.reg_)];
+        register1 = p.reg_;
+        immediate = addr;
+        opcode = "100011";
         assembler.lw(r1, addr);
         return null;
     }
@@ -379,6 +497,8 @@ public class Interpreter
         { /* Code For EJ Goes Here */
 
             int pntr = p.pcpntr_.accept(new PCPntrVisitor(), arg);
+            opcode = "000010";
+            destination = pntr;
             assembler.j(pntr);
             return null;
         }
@@ -387,18 +507,22 @@ public class Interpreter
     {
         public String visit(grammar.Absyn.ESyscall p, Object arg)
         { /* Code For ESyscall Goes Here */
-
+            type = 'B';
             return null;
         }    public String visit(grammar.Absyn.ERInstr p, Object arg)
     { /* Code For ERInstr Goes Here */
+        type = 'R';
+        opcode = "000000";
         p.rinstr_.accept(new RInstrVisitor(), arg);
         return null;
     }    public String visit(grammar.Absyn.EIInstr p, Object arg)
     { /* Code For EIInstr Goes Here */
+        type = 'I';
         p.iinstr_.accept(new IInstrVisitor(), arg);
         return null;
     }    public String visit(grammar.Absyn.EJInstr p, Object arg)
     { /* Code For EJInstr Goes Here */
+        type = 'J';
         p.jinstr_.accept(new JInstrVisitor(), arg);
         return null;
     }
