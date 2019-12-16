@@ -22,22 +22,18 @@ public class Massembler {
     }
 
     public void add(Register rd, Register rs, Register rt){
-        rd.value = rs.value + rt.value;
+        rd.setValue(rs.getValue() + rt.getValue());
         programCounter+=1;
     }
 
     public void sub(Register rd, Register rs, Register rt){
-        rd.value = rs.value - rt.value;
+        rd.setValue(rs.getValue() + rt.getValue());
         programCounter+=1;
     }
 
     public void slt(Register d, Register s, Register t){
+        d.setValue(s.getValue() < t.getValue() ? 1 : 0);
         programCounter+=1;
-        if(s.getValue() < t.getValue()){
-            d.setValue(1);
-        }
-        else
-            d.setValue(0);
     }
 
     public void and(Register rd, Register rs, Register rt){
@@ -47,12 +43,7 @@ public class Massembler {
     }
 
     public void slti(Register t, Register s, int imm){
-
-        if(s.getValue() < imm)
-            t.setValue(1);
-        else{
-            t.setValue(0);
-        }
+        t.setValue(s.getValue() < imm ? 1 : 0);
         programCounter+=1;
 
     }
@@ -64,22 +55,17 @@ public class Massembler {
 
     public void addi(Register rd, Register rs, int imm){
         programCounter+=1;
-        rd.value = rs.value + imm;
+        rd.setValue(rs.getValue() + imm);
     }
 
     public void andi(Register rd, Register rs, int imm){
         programCounter+=1;
-
         rd.setValue(rs.getValue() & imm);
-
     }
 
     public void ori(Register rd, Register rs, int imm){
         programCounter+=1;
-        rd.setValue(1);
-        if(rs.value == 1 || imm == 1)
-            rd.setValue(1);
-
+        rs.setValue(rs.getValue() | imm);
     }
 
     public void lw(Register reg1, int address){
