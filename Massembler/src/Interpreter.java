@@ -437,7 +437,7 @@ public class Interpreter
         Register r2 = assembler.registers[Register.lookup(p.reg_2)];
         register1 = p.reg_1;
         register2 = p.reg_2;
-        destination = dest;
+        destination = pntr;
         opcode = "000101";
         assembler.bne(r1, r2, dest);
         return null;
@@ -452,7 +452,7 @@ public class Interpreter
         Register r2 = assembler.registers[Register.lookup(p.reg_2)];
         register1 = p.reg_1;
         register2 = p.reg_2;
-        destination = dest;
+        destination = pntr;
         opcode = "000100";
         assembler.beq(r1, r2, dest);
         return null;
