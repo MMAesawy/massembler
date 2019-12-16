@@ -6,6 +6,7 @@ public class Register {
         //Sets the value to zero whenever an instance is initialized.
         setNumber(0);
     }
+
     public int getNumber() {
         return this.value;
     }
