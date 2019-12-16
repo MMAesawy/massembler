@@ -20,41 +20,54 @@ public class Preprocessor
     public ArrayList<Integer> pcToFc;
     private int gProgramCounter = 0;
 
-    private BufferedReader reader;
     private Pattern registerRegex;
 
-    public Preprocessor(InputStreamReader in) throws IOException{
+    public Preprocessor(){
         labelLookup = new HashMap<>();
         instructionTypes = new ArrayList<>();
         pcToFc = new ArrayList<>();
-        reader = new BufferedReader(in);
         registerRegex = Pattern.compile("\\$(0|at|v[01]|a[0-3]|t[0-9]|s[0-7]|k[01]|gp|sp|ra|fp)");
-        initialPass();
     }
 
-    public void initialPass() throws IOException {
+    public void initialPass(InputStreamReader in) throws IOException {
+        BufferedReader reader = new BufferedReader(in);
         int programCounter = 0;
         int fileCounter = 0;
         String label = null;
         Pattern whitespaceLabelRegex = Pattern.compile("\\s*([A-Za-z]\\w*\\s*:\\s*)?"); // recursive matcher, only use on whole string
         Pattern labelRegex = Pattern.compile("([A-Za-z]\\w*)\\s*:");
+        boolean onComment = false;
         while (reader.ready()){
             String line = reader.readLine();
-
-            // If there is a label, put it in the label lookup table
-            Matcher match = labelRegex.matcher(line);
-            if (match.find()){
-                label = match.group(1);
+            if (onComment){
+                if (line.contains("*/")) {
+                    onComment = false;
+                }
+                line = line.substring(line.indexOf("*/"));
             }
 
-            // If the line actually contains an instruction
-            if (!whitespaceLabelRegex.matcher(line).matches()){
-                if (label != null) {
-                    labelLookup.put(label, programCounter);
-                    label = null;
+            if (!onComment) {
+                line = line.substring(0, line.indexOf("//")); // ignore comments
+                if (line.contains("/*")) {
+                    onComment = true;
                 }
-                pcToFc.add(fileCounter);
-                programCounter++;
+                line = line.substring(0, line.indexOf("/*")); // ignore multiline comment starts
+
+                // If there is a label, put it in the label lookup table
+                Matcher match = labelRegex.matcher(line);
+                if (match.find()) {
+                    label = match.group(1);
+                }
+
+                // If the line actually contains an instruction
+                if (!whitespaceLabelRegex.matcher(line).matches()) {
+                    if (label != null) {
+                        labelLookup.put(label, programCounter);
+                        label = null;
+                    }
+                    pcToFc.add(fileCounter);
+                    programCounter++;
+                }
             }
             fileCounter++;
         }

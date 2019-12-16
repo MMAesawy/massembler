@@ -1,12 +1,13 @@
 import grammar.Absyn.*;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java_cup.runtime.*;
+import grammar.*;
+import grammar.Absyn.*;
+import java.io.*;
 
 /*** BNFC-Generated Visitor Design Pattern Skeleton. ***/
 /* This implements the common visitor design pattern.
@@ -17,32 +18,97 @@ import java.util.regex.Pattern;
 
 public class Interpreter
 {
-    public HashMap<String, Integer> labelLookup;
-    public ArrayList<Character> instructionTypes;
-    public ArrayList<Integer> pcToFc;
-    public Assembler assembler;
-    private int gProgramCounter = 0;
+    public Massembler assembler;
 
-    private BufferedReader reader;
-    private Pattern registerRegex;
-
-    private ProgramVisitor visitor;
+    private boolean errorFlag = false;
     private boolean single = false;
     private int counterMax;
+    private Preprocessor preprocessor;
+    private PrintStream outputStream;
+    private PrintStream errorStream;
+    private grammar.Absyn.Program parsedProgram;
 
-    public Interpreter(Assembler ass, InputStreamReader in, int instructionCount) throws IOException {
+
+    public Interpreter(Massembler ass, InputStreamReader in) throws IOException{
+        this(ass, in, null, null);
+    }
+
+    public Interpreter(Massembler ass, InputStreamReader in, PrintStream output, PrintStream error) throws IOException {
         assembler = ass;
-        visitor = new ProgramVisitor();
-        counterMax = instructionCount;
+        preprocessor = new Preprocessor();
+        outputStream = output;
+        errorStream = error;
+
+        // Parse
+        in.reset();
+        Yylex l = new Yylex(in);
+        parser p = new parser(l);
+        try
+        {
+            parsedProgram = p.pProgram();
+            if (outputStream != null) {
+                outputStream.println("[Parsing successful]");
+            }
+        }
+        catch(Throwable e)
+        {
+            errorFlag = true;
+            if (errorStream != null) {
+                errorStream.println("At line " + String.valueOf(l.line_num()) + ", near \"" + l.buff() + "\" :");
+                errorStream.println("     " + e.getMessage());
+            }
+            return;
+            //System.exit(1);
+        }
+
+        // Preprocess initial pass
+        in.reset();
+        try{
+            preprocessor.initialPass(in);
+            preprocessor.preprocess(parsedProgram);
+            if (outputStream != null) {
+                outputStream.println("[Preprocessing successful]");
+            }
+        }
+        catch(IOException e){
+            errorFlag = true;
+            if (errorStream != null) {
+                errorStream.println("Preprocessing error!");
+            }
+        }
+
+        counterMax = preprocessor.pcToFc.size() + 1; // assuming pcToFc extends to end of program
     }
 
-    public void interpretAll(Program p){
-        p.accept(new ProgramVisitor(), null);
+    public char getInstructionType(int instructionNumber){
+        return preprocessor.instructionTypes.get(instructionNumber);
     }
 
-    public void interpretNext(Program p){
+    public int getLineNumber(int instructionNumber){
+        return preprocessor.pcToFc.get(instructionNumber);
+    }
+
+    public boolean ready(){
+        return assembler.programCounter < counterMax && !errorFlag;
+    }
+
+    public void interpretAll(){
+        if (!ready()){
+            if (errorStream != null){
+                errorStream.println("WARNING: Executing when not ready!");
+            }
+        }
+        parsedProgram.accept(new ProgramVisitor(), null);
+    }
+
+    public void interpretNext(){
+        if (!ready()){
+            if (errorStream != null){
+                errorStream.println("WARNING: Executing when not ready!");
+            }
+        }
         single = true;
-        p.accept(new ProgramVisitor(), null);
+        parsedProgram.accept(new ProgramVisitor(), null);
         single = false;
     }
 
@@ -53,7 +119,7 @@ public class Interpreter
         { /* Code For PDefs Goes Here */
             while (assembler.programCounter < counterMax)
             {
-                p.liststmt_[assembler.programCounter].accept(new StmtVisitor(), arg);
+                p.liststmt_.get(assembler.programCounter).accept(new StmtVisitor(), arg);
                 if (single) break;
             }
             return null;
@@ -85,11 +151,7 @@ public class Interpreter
         { /* Code For OffRel Goes Here */
             //p.integer_;
             //p.reg_;
-            boolean validRegister = true;
-            if (!registerRegex.matcher(p.reg_).matches()) validRegister = false;
-            if (!validRegister){
-                // throw invalid register error
-            }
+
             return null;
         }
     }
@@ -141,81 +203,41 @@ public class Interpreter
             //p.reg_1;
             //p.reg_2;
             //p.reg_3;
-            boolean validRegister = true;
-            if (!registerRegex.matcher(p.reg_1).matches()) validRegister = false;
-            if (!registerRegex.matcher(p.reg_2).matches()) validRegister = false;
-            if (!registerRegex.matcher(p.reg_3).matches()) validRegister = false;
-            if (!validRegister){
-                // throw invalid register error
-            }
-            instructionTypes.set(gProgramCounter, 'R');
+
             return null;
         }    public String visit(grammar.Absyn.ESub p, Object arg)
     { /* Code For ESub Goes Here */
         //p.reg_1;
         //p.reg_2;
         //p.reg_3;
-        boolean validRegister = true;
-        if (!registerRegex.matcher(p.reg_1).matches()) validRegister = false;
-        if (!registerRegex.matcher(p.reg_2).matches()) validRegister = false;
-        if (!registerRegex.matcher(p.reg_3).matches()) validRegister = false;
-        if (!validRegister){
-            // throw invalid register error
-        }
-        instructionTypes.set(gProgramCounter, 'R');
+
         return null;
     }    public String visit(grammar.Absyn.EAnd p, Object arg)
     { /* Code For EAnd Goes Here */
         //p.reg_1;
         //p.reg_2;
         //p.reg_3;
-        boolean validRegister = true;
-        if (!registerRegex.matcher(p.reg_1).matches()) validRegister = false;
-        if (!registerRegex.matcher(p.reg_2).matches()) validRegister = false;
-        if (!registerRegex.matcher(p.reg_3).matches()) validRegister = false;
-        if (!validRegister){
-            // throw invalid register error
-        }
-        instructionTypes.set(gProgramCounter, 'R');
+
         return null;
     }    public String visit(grammar.Absyn.EOr p, Object arg)
     { /* Code For EOr Goes Here */
         //p.reg_1;
         //p.reg_2;
         //p.reg_3;
-        boolean validRegister = true;
-        if (!registerRegex.matcher(p.reg_1).matches()) validRegister = false;
-        if (!registerRegex.matcher(p.reg_2).matches()) validRegister = false;
-        if (!registerRegex.matcher(p.reg_3).matches()) validRegister = false;
-        if (!validRegister){
-            // throw invalid register error
-        }
-        instructionTypes.set(gProgramCounter, 'R');
+
         return null;
     }    public String visit(grammar.Absyn.ESll p, Object arg)
     { /* Code For ESll Goes Here */
         //p.reg_1;
         //p.reg_2;
-        boolean validRegister = true;
-        if (!registerRegex.matcher(p.reg_1).matches()) validRegister = false;
-        if (!registerRegex.matcher(p.reg_2).matches()) validRegister = false;
-        if (!validRegister){
-            // throw invalid register error
-        }
-        instructionTypes.set(gProgramCounter, 'R');
+
         p.imm_.accept(new ImmVisitor(), arg);
         return null;
     }    public String visit(grammar.Absyn.ESrl p, Object arg)
     { /* Code For ESrl Goes Here */
         //p.reg_1;
         //p.reg_2;
-        boolean validRegister = true;
-        if (!registerRegex.matcher(p.reg_1).matches()) validRegister = false;
-        if (!registerRegex.matcher(p.reg_2).matches()) validRegister = false;
-        if (!validRegister){
-            // throw invalid register error
-        }
-        instructionTypes.set(gProgramCounter, 'R');
+
         p.imm_.accept(new ImmVisitor(), arg);
         return null;
     }    public String visit(grammar.Absyn.ESlt p, Object arg)
@@ -223,23 +245,12 @@ public class Interpreter
         //p.reg_1;
         //p.reg_2;
         //p.reg_3;
-        boolean validRegister = true;
-        if (!registerRegex.matcher(p.reg_1).matches()) validRegister = false;
-        if (!registerRegex.matcher(p.reg_2).matches()) validRegister = false;
-        if (!validRegister){
-            // throw invalid register error
-        }
-        instructionTypes.set(gProgramCounter, 'R');
+
         return null;
     }    public String visit(grammar.Absyn.EJr p, Object arg)
     { /* Code For EJr Goes Here */
         //p.reg_;
-        boolean validRegister = true;
-        if (!registerRegex.matcher(p.reg_).matches()) validRegister = false;
-        if (!validRegister){
-            // throw invalid register error
-        }
-        instructionTypes.set(gProgramCounter, 'R');
+
         return null;
     }
     }
@@ -249,111 +260,60 @@ public class Interpreter
         { /* Code For EAddi Goes Here */
             //p.reg_1;
             //p.reg_2;
-            boolean validRegister = true;
-            if (!registerRegex.matcher(p.reg_1).matches()) validRegister = false;
-            if (!registerRegex.matcher(p.reg_2).matches()) validRegister = false;
-            if (!validRegister){
-                // throw invalid register error
-            }
-            instructionTypes.set(gProgramCounter, 'I');
+
             p.imm_.accept(new ImmVisitor(), arg);
             return null;
         }    public String visit(grammar.Absyn.EOri p, Object arg)
     { /* Code For EOri Goes Here */
         //p.reg_1;
         //p.reg_2;
-        boolean validRegister = true;
-        if (!registerRegex.matcher(p.reg_1).matches()) validRegister = false;
-        if (!registerRegex.matcher(p.reg_2).matches()) validRegister = false;
-        if (!validRegister){
-            // throw invalid register error
-        }
-        instructionTypes.set(gProgramCounter, 'I');
+
         p.imm_.accept(new ImmVisitor(), arg);
         return null;
     }    public String visit(grammar.Absyn.EAndi p, Object arg)
     { /* Code For EAndi Goes Here */
         //p.reg_1;
         //p.reg_2;
-        boolean validRegister = true;
-        if (!registerRegex.matcher(p.reg_1).matches()) validRegister = false;
-        if (!registerRegex.matcher(p.reg_2).matches()) validRegister = false;
-        if (!validRegister){
-            // throw invalid register error
-        }
-        instructionTypes.set(gProgramCounter, 'I');
+
         p.imm_.accept(new ImmVisitor(), arg);
         return null;
     }    public String visit(grammar.Absyn.ESlti p, Object arg)
     { /* Code For ESlti Goes Here */
         //p.reg_1;
         //p.reg_2;
-        boolean validRegister = true;
-        if (!registerRegex.matcher(p.reg_1).matches()) validRegister = false;
-        if (!registerRegex.matcher(p.reg_2).matches()) validRegister = false;
-        if (!validRegister){
-            // throw invalid register error
-        }
-        instructionTypes.set(gProgramCounter, 'I');
+
         p.imm_.accept(new ImmVisitor(), arg);
         return null;
     }    public String visit(grammar.Absyn.EBne p, Object arg)
     { /* Code For EBne Goes Here */
         //p.reg_1;
         //p.reg_2;
-        boolean validRegister = true;
-        if (!registerRegex.matcher(p.reg_1).matches()) validRegister = false;
-        if (!registerRegex.matcher(p.reg_2).matches()) validRegister = false;
-        if (!validRegister){
-            // throw invalid register error
-        }
-        instructionTypes.set(gProgramCounter, 'I');
+
         p.pcpntr_.accept(new PCPntrVisitor(), arg);
         return null;
     }    public String visit(grammar.Absyn.EBeq p, Object arg)
     { /* Code For EBeq Goes Here */
         //p.reg_1;
         //p.reg_2;
-        boolean validRegister = true;
-        if (!registerRegex.matcher(p.reg_1).matches()) validRegister = false;
-        if (!registerRegex.matcher(p.reg_2).matches()) validRegister = false;
-        if (!validRegister){
-            // throw invalid register error
-        }
-        instructionTypes.set(gProgramCounter, 'I');
+
         p.pcpntr_.accept(new PCPntrVisitor(), arg);
         return null;
     }    public String visit(grammar.Absyn.ELui p, Object arg)
     { /* Code For ELui Goes Here */
         //p.reg_;
-        boolean validRegister = true;
-        if (!registerRegex.matcher(p.reg_).matches()) validRegister = false;
-        if (!validRegister){
-            // throw invalid register error
-        }
-        instructionTypes.set(gProgramCounter, 'I');
+
         p.imm_.accept(new ImmVisitor(), arg);
         return null;
     }    public String visit(grammar.Absyn.ESw p, Object arg)
     { /* Code For ESw Goes Here */
         //p.reg_;
-        boolean validRegister = true;
-        if (!registerRegex.matcher(p.reg_).matches()) validRegister = false;
-        if (!validRegister){
-            // throw invalid register error
-        }
-        instructionTypes.set(gProgramCounter, 'I');
+
         p.addr_.accept(new AddrVisitor(), arg);
         return null;
     }    public String visit(grammar.Absyn.ELw p, Object arg)
     { /* Code For ELw Goes Here */
         //p.reg_;
-        boolean validRegister = true;
-        if (!registerRegex.matcher(p.reg_).matches()) validRegister = false;
-        if (!validRegister){
-            // throw invalid register error
-        }
-        instructionTypes.set(gProgramCounter, 'I');
+
         p.addr_.accept(new AddrVisitor(), arg);
         return null;
     }
@@ -362,7 +322,7 @@ public class Interpreter
     {
         public String visit(grammar.Absyn.EJ p, Object arg)
         { /* Code For EJ Goes Here */
-            instructionTypes.set(gProgramCounter, 'J');
+
             p.pcpntr_.accept(new PCPntrVisitor(), arg);
             return null;
         }
@@ -371,7 +331,7 @@ public class Interpreter
     {
         public String visit(grammar.Absyn.ESyscall p, Object arg)
         { /* Code For ESyscall Goes Here */
-            instructionTypes.set(gProgramCounter, 'B'); // B as in interrupt/breakpoint
+
             return null;
         }    public String visit(grammar.Absyn.ERInstr p, Object arg)
     { /* Code For ERInstr Goes Here */
