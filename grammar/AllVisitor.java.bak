@@ -11,7 +11,6 @@ public interface AllVisitor<R,A> extends
   grammar.Absyn.LblInstr.Visitor<R,A>,
   grammar.Absyn.Imm.Visitor<R,A>,
   grammar.Absyn.Addr.Visitor<R,A>,
-  grammar.Absyn.PCPntr.Visitor<R,A>,
   grammar.Absyn.RInstr.Visitor<R,A>,
   grammar.Absyn.IInstr.Visitor<R,A>,
   grammar.Absyn.JInstr.Visitor<R,A>,

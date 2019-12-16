@@ -55,16 +55,8 @@ IDENT = ({LETTER}|{DIGIT}|['_])
 
 
 <YYINITIAL>\$([tvsak]?{DIGIT}|[gsfr][pa]) { return new Symbol(sym.Reg, yytext().intern()); }
+<YYINITIAL>{LETTER}({DIGIT}|{LETTER}|_)* { return new Symbol(sym.LineLabel, yytext().intern()); }
 
-<YYINITIAL>"\"" { yybegin(STRING); }
-<STRING>\\ { yybegin(ESCAPED); }
-<STRING>\" { String foo = pstring; pstring = new String(); yybegin(YYINITIAL); return new Symbol(sym._STRING_, foo.intern()); }
-<STRING>.  { pstring += yytext(); }
-<ESCAPED>n { pstring +=  "\n"; yybegin(STRING); }
-<ESCAPED>\" { pstring += "\""; yybegin(STRING); }
-<ESCAPED>\\ { pstring += "\\"; yybegin(STRING); }
-<ESCAPED>t  { pstring += "\t"; yybegin(STRING); }
-<ESCAPED>.  { pstring += yytext(); yybegin(STRING); }
 
 
 

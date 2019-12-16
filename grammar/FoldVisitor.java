@@ -43,11 +43,6 @@ public abstract class FoldVisitor<R,A> implements AllVisitor<R,A> {
       R r = leaf(arg);
       return r;
     }
-    public R visit(grammar.Absyn.OffLbl p, A arg) {
-      R r = leaf(arg);
-      r = combine(p.label_.accept(this, arg), r, arg);
-      return r;
-    }
 
 /* LblInstr */
     public R visit(grammar.Absyn.LbledStmt p, A arg) {
@@ -69,14 +64,20 @@ public abstract class FoldVisitor<R,A> implements AllVisitor<R,A> {
     }
 
 /* Addr */
-    public R visit(grammar.Absyn.AddAbs p, A arg) {
-      R r = leaf(arg);
-      r = combine(p.imm_.accept(this, arg), r, arg);
-      return r;
-    }
     public R visit(grammar.Absyn.AddRel p, A arg) {
       R r = leaf(arg);
       r = combine(p.offset_.accept(this, arg), r, arg);
+      return r;
+    }
+
+/* PCPntr */
+    public R visit(grammar.Absyn.PCPntrLbl p, A arg) {
+      R r = leaf(arg);
+      return r;
+    }
+    public R visit(grammar.Absyn.PCPntrImm p, A arg) {
+      R r = leaf(arg);
+      r = combine(p.imm_.accept(this, arg), r, arg);
       return r;
     }
 
@@ -139,12 +140,12 @@ public abstract class FoldVisitor<R,A> implements AllVisitor<R,A> {
     }
     public R visit(grammar.Absyn.EBne p, A arg) {
       R r = leaf(arg);
-      r = combine(p.addr_.accept(this, arg), r, arg);
+      r = combine(p.pcpntr_.accept(this, arg), r, arg);
       return r;
     }
     public R visit(grammar.Absyn.EBeq p, A arg) {
       R r = leaf(arg);
-      r = combine(p.addr_.accept(this, arg), r, arg);
+      r = combine(p.pcpntr_.accept(this, arg), r, arg);
       return r;
     }
     public R visit(grammar.Absyn.ELui p, A arg) {
@@ -166,7 +167,7 @@ public abstract class FoldVisitor<R,A> implements AllVisitor<R,A> {
 /* JInstr */
     public R visit(grammar.Absyn.EJ p, A arg) {
       R r = leaf(arg);
-      r = combine(p.addr_.accept(this, arg), r, arg);
+      r = combine(p.pcpntr_.accept(this, arg), r, arg);
       return r;
     }
 

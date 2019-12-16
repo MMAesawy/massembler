@@ -30,6 +30,7 @@ nonterminal grammar.Absyn.Offset Offset;
 nonterminal grammar.Absyn.LblInstr LblInstr;
 nonterminal grammar.Absyn.Imm Imm;
 nonterminal grammar.Absyn.Addr Addr;
+nonterminal grammar.Absyn.PCPntr PCPntr;
 nonterminal grammar.Absyn.RInstr RInstr;
 nonterminal grammar.Absyn.IInstr IInstr;
 nonterminal grammar.Absyn.JInstr JInstr;
@@ -83,15 +84,16 @@ Stmt ::= LblInstr:p_1  {: RESULT = new grammar.Absyn.EStmtLbl(p_1); :}
 Label ::= LineLabel:p_1 _SYMB_0  {: RESULT = new grammar.Absyn.ELbl(p_1); :} 
 ;
 Offset ::= _INTEGER_:p_1 _SYMB_1 Reg:p_3 _SYMB_2  {: RESULT = new grammar.Absyn.OffRel(p_1,p_3); :} 
-  | Label:p_1  {: RESULT = new grammar.Absyn.OffLbl(p_1); :}
 ;
 LblInstr ::= Label:p_1 Instr:p_2  {: RESULT = new grammar.Absyn.LbledStmt(p_1,p_2); :} 
   | Label:p_1  {: RESULT = new grammar.Absyn.LbledLine(p_1); :}
 ;
 Imm ::= _INTEGER_:p_1  {: RESULT = new grammar.Absyn.Immi(p_1); :} 
 ;
-Addr ::= Imm:p_1  {: RESULT = new grammar.Absyn.AddAbs(p_1); :} 
-  | Offset:p_1  {: RESULT = new grammar.Absyn.AddRel(p_1); :}
+Addr ::= Offset:p_1  {: RESULT = new grammar.Absyn.AddRel(p_1); :} 
+;
+PCPntr ::= LineLabel:p_1  {: RESULT = new grammar.Absyn.PCPntrLbl(p_1); :} 
+  | Imm:p_1  {: RESULT = new grammar.Absyn.PCPntrImm(p_1); :}
 ;
 RInstr ::= _SYMB_4 Reg:p_2 _SYMB_3 Reg:p_4 _SYMB_3 Reg:p_6  {: RESULT = new grammar.Absyn.EAdd(p_2,p_4,p_6); :} 
   | _SYMB_20 Reg:p_2 _SYMB_3 Reg:p_4 _SYMB_3 Reg:p_6  {: RESULT = new grammar.Absyn.ESub(p_2,p_4,p_6); :}
@@ -106,13 +108,13 @@ IInstr ::= _SYMB_5 Reg:p_2 _SYMB_3 Reg:p_4 _SYMB_3 Imm:p_6  {: RESULT = new gram
   | _SYMB_15 Reg:p_2 _SYMB_3 Reg:p_4 _SYMB_3 Imm:p_6  {: RESULT = new grammar.Absyn.EOri(p_2,p_4,p_6); :}
   | _SYMB_7 Reg:p_2 _SYMB_3 Reg:p_4 _SYMB_3 Imm:p_6  {: RESULT = new grammar.Absyn.EAndi(p_2,p_4,p_6); :}
   | _SYMB_18 Reg:p_2 _SYMB_3 Reg:p_4 _SYMB_3 Imm:p_6  {: RESULT = new grammar.Absyn.ESlti(p_2,p_4,p_6); :}
-  | _SYMB_9 Reg:p_2 _SYMB_3 Reg:p_4 _SYMB_3 Addr:p_6  {: RESULT = new grammar.Absyn.EBne(p_2,p_4,p_6); :}
-  | _SYMB_8 Reg:p_2 _SYMB_3 Reg:p_4 _SYMB_3 Addr:p_6  {: RESULT = new grammar.Absyn.EBeq(p_2,p_4,p_6); :}
+  | _SYMB_9 Reg:p_2 _SYMB_3 Reg:p_4 _SYMB_3 PCPntr:p_6  {: RESULT = new grammar.Absyn.EBne(p_2,p_4,p_6); :}
+  | _SYMB_8 Reg:p_2 _SYMB_3 Reg:p_4 _SYMB_3 PCPntr:p_6  {: RESULT = new grammar.Absyn.EBeq(p_2,p_4,p_6); :}
   | _SYMB_12 Reg:p_2 _SYMB_3 Imm:p_4  {: RESULT = new grammar.Absyn.ELui(p_2,p_4); :}
   | _SYMB_21 Reg:p_2 _SYMB_3 Addr:p_4  {: RESULT = new grammar.Absyn.ESw(p_2,p_4); :}
   | _SYMB_13 Reg:p_2 _SYMB_3 Addr:p_4  {: RESULT = new grammar.Absyn.ELw(p_2,p_4); :}
 ;
-JInstr ::= _SYMB_10 Addr:p_2  {: RESULT = new grammar.Absyn.EJ(p_2); :} 
+JInstr ::= _SYMB_10 PCPntr:p_2  {: RESULT = new grammar.Absyn.EJ(p_2); :} 
 ;
 Instr ::= _SYMB_22  {: RESULT = new grammar.Absyn.ESyscall(); :} 
   | RInstr:p_1  {: RESULT = new grammar.Absyn.ERInstr(p_1); :}

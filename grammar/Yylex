@@ -54,7 +54,7 @@ IDENT = ({LETTER}|{DIGIT}|['_])
 <COMMENT>[\n] { }
 
 
-<YYINITIAL>\$([tvsak]?{DIGIT}|[gsfr][pa]) { return new Symbol(sym.Reg, yytext().intern()); }
+<YYINITIAL>\$([tvsak]?{DIGIT}|at|gp|sp|fp|ra) { return new Symbol(sym.Reg, yytext().intern()); }
 <YYINITIAL>{LETTER}({DIGIT}|{LETTER}|_)* { return new Symbol(sym.LineLabel, yytext().intern()); }
 
 

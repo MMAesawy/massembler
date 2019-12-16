@@ -9,18 +9,21 @@ terminator Stmt "" ;
 EStmtLbl. Stmt ::= LblInstr ;
 EStmtInstr. Stmt ::= Instr ;
 
-token Reg ('$' ( (["tvsak"]? digit) | (["gsfr"] ["pa"]))) ;
+token Reg ('$' ( (["tvsak"]? digit) | {"at"} | {"gp"} | {"sp"} | {"fp"} | {"ra"})) ;
 token LineLabel (letter (digit | letter | '_')* ) ;
 ELbl. Label ::= LineLabel ":" ;
 OffRel. Offset ::= Integer "(" Reg ")" ;
-OffLbl. Offset ::= Label ;
+-- OffLbl. Offset ::= LineLabel ;
 
 LbledStmt. LblInstr ::= Label Instr ;
 LbledLine. LblInstr ::= Label ;
 
 Immi. Imm ::= Integer ;
-AddAbs. Addr ::= Imm ;
+-- MIPS32 only supports displacement addressing AddAbs. Addr ::= Imm ;
 AddRel. Addr ::= Offset ;
+
+PCPntrLbl. PCPntr ::= LineLabel ; 
+PCPntrImm. PCPntr ::= Imm ;
 
 EAdd. RInstr ::= "add" Reg "," Reg "," Reg ;
 ESub. RInstr ::= "sub" Reg "," Reg "," Reg ;
@@ -35,13 +38,13 @@ EAddi. IInstr ::= "addi" Reg "," Reg "," Imm ;
 EOri. IInstr ::= "ori" Reg "," Reg "," Imm ;
 EAndi. IInstr ::= "andi" Reg "," Reg "," Imm ;
 ESlti. IInstr ::= "slti" Reg "," Reg "," Imm ;
-EBne. IInstr ::= "bne" Reg "," Reg "," Addr ;
-EBeq. IInstr ::= "beq" Reg "," Reg "," Addr ;
+EBne. IInstr ::= "bne" Reg "," Reg "," PCPntr ;
+EBeq. IInstr ::= "beq" Reg "," Reg "," PCPntr ;
 ELui. IInstr ::= "lui" Reg "," Imm ;
 ESw. IInstr ::= "sw" Reg "," Addr ;
 ELw. IInstr ::= "lw" Reg "," Addr ;
 
-EJ. JInstr ::= "j" Addr ;
+EJ. JInstr ::= "j" PCPntr ;
 
 ESyscall. Instr ::= "syscall" ;
 ERInstr. Instr ::= RInstr ;

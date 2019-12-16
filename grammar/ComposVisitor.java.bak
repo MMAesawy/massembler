@@ -11,6 +11,7 @@ public class ComposVisitor<A> implements
   grammar.Absyn.LblInstr.Visitor<grammar.Absyn.LblInstr,A>,
   grammar.Absyn.Imm.Visitor<grammar.Absyn.Imm,A>,
   grammar.Absyn.Addr.Visitor<grammar.Absyn.Addr,A>,
+  grammar.Absyn.PCPntr.Visitor<grammar.Absyn.PCPntr,A>,
   grammar.Absyn.RInstr.Visitor<grammar.Absyn.RInstr,A>,
   grammar.Absyn.IInstr.Visitor<grammar.Absyn.IInstr,A>,
   grammar.Absyn.JInstr.Visitor<grammar.Absyn.JInstr,A>,
@@ -48,10 +49,6 @@ public class ComposVisitor<A> implements
       Integer integer_ = p.integer_;
       String reg_ = p.reg_;
       return new grammar.Absyn.OffRel(integer_, reg_);
-    }    public Offset visit(grammar.Absyn.OffLbl p, A arg)
-    {
-      Label label_ = p.label_.accept(this, arg);
-      return new grammar.Absyn.OffLbl(label_);
     }
 /* LblInstr */
     public LblInstr visit(grammar.Absyn.LbledStmt p, A arg)
@@ -71,14 +68,20 @@ public class ComposVisitor<A> implements
       return new grammar.Absyn.Immi(integer_);
     }
 /* Addr */
-    public Addr visit(grammar.Absyn.AddAbs p, A arg)
-    {
-      Imm imm_ = p.imm_.accept(this, arg);
-      return new grammar.Absyn.AddAbs(imm_);
-    }    public Addr visit(grammar.Absyn.AddRel p, A arg)
+    public Addr visit(grammar.Absyn.AddRel p, A arg)
     {
       Offset offset_ = p.offset_.accept(this, arg);
       return new grammar.Absyn.AddRel(offset_);
+    }
+/* PCPntr */
+    public PCPntr visit(grammar.Absyn.PCPntrLbl p, A arg)
+    {
+      String linelabel_ = p.linelabel_;
+      return new grammar.Absyn.PCPntrLbl(linelabel_);
+    }    public PCPntr visit(grammar.Absyn.PCPntrImm p, A arg)
+    {
+      Imm imm_ = p.imm_.accept(this, arg);
+      return new grammar.Absyn.PCPntrImm(imm_);
     }
 /* RInstr */
     public RInstr visit(grammar.Absyn.EAdd p, A arg)
@@ -157,14 +160,14 @@ public class ComposVisitor<A> implements
     {
       String reg_1 = p.reg_1;
       String reg_2 = p.reg_2;
-      Offset offset_ = p.offset_.accept(this, arg);
-      return new grammar.Absyn.EBne(reg_1, reg_2, offset_);
+      Addr addr_ = p.addr_.accept(this, arg);
+      return new grammar.Absyn.EBne(reg_1, reg_2, addr_);
     }    public IInstr visit(grammar.Absyn.EBeq p, A arg)
     {
       String reg_1 = p.reg_1;
       String reg_2 = p.reg_2;
-      Offset offset_ = p.offset_.accept(this, arg);
-      return new grammar.Absyn.EBeq(reg_1, reg_2, offset_);
+      Addr addr_ = p.addr_.accept(this, arg);
+      return new grammar.Absyn.EBeq(reg_1, reg_2, addr_);
     }    public IInstr visit(grammar.Absyn.ELui p, A arg)
     {
       String reg_ = p.reg_;
@@ -173,13 +176,13 @@ public class ComposVisitor<A> implements
     }    public IInstr visit(grammar.Absyn.ESw p, A arg)
     {
       String reg_ = p.reg_;
-      Offset offset_ = p.offset_.accept(this, arg);
-      return new grammar.Absyn.ESw(reg_, offset_);
+      Addr addr_ = p.addr_.accept(this, arg);
+      return new grammar.Absyn.ESw(reg_, addr_);
     }    public IInstr visit(grammar.Absyn.ELw p, A arg)
     {
       String reg_ = p.reg_;
-      Offset offset_ = p.offset_.accept(this, arg);
-      return new grammar.Absyn.ELw(reg_, offset_);
+      Addr addr_ = p.addr_.accept(this, arg);
+      return new grammar.Absyn.ELw(reg_, addr_);
     }
 /* JInstr */
     public JInstr visit(grammar.Absyn.EJ p, A arg)

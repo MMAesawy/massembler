@@ -45,10 +45,6 @@ public class VisitSkel
       //p.integer_;
       //p.reg_;
       return null;
-    }    public R visit(grammar.Absyn.OffLbl p, A arg)
-    { /* Code For OffLbl Goes Here */
-      p.label_.accept(new LabelVisitor<R,A>(), arg);
-      return null;
     }
   }
   public class LblInstrVisitor<R,A> implements LblInstr.Visitor<R,A>
@@ -74,13 +70,21 @@ public class VisitSkel
   }
   public class AddrVisitor<R,A> implements Addr.Visitor<R,A>
   {
-    public R visit(grammar.Absyn.AddAbs p, A arg)
-    { /* Code For AddAbs Goes Here */
-      p.imm_.accept(new ImmVisitor<R,A>(), arg);
-      return null;
-    }    public R visit(grammar.Absyn.AddRel p, A arg)
+    public R visit(grammar.Absyn.AddRel p, A arg)
     { /* Code For AddRel Goes Here */
       p.offset_.accept(new OffsetVisitor<R,A>(), arg);
+      return null;
+    }
+  }
+  public class PCPntrVisitor<R,A> implements PCPntr.Visitor<R,A>
+  {
+    public R visit(grammar.Absyn.PCPntrLbl p, A arg)
+    { /* Code For PCPntrLbl Goes Here */
+      //p.linelabel_;
+      return null;
+    }    public R visit(grammar.Absyn.PCPntrImm p, A arg)
+    { /* Code For PCPntrImm Goes Here */
+      p.imm_.accept(new ImmVisitor<R,A>(), arg);
       return null;
     }
   }
@@ -164,13 +168,13 @@ public class VisitSkel
     { /* Code For EBne Goes Here */
       //p.reg_1;
       //p.reg_2;
-      p.addr_.accept(new AddrVisitor<R,A>(), arg);
+      p.pcpntr_.accept(new PCPntrVisitor<R,A>(), arg);
       return null;
     }    public R visit(grammar.Absyn.EBeq p, A arg)
     { /* Code For EBeq Goes Here */
       //p.reg_1;
       //p.reg_2;
-      p.addr_.accept(new AddrVisitor<R,A>(), arg);
+      p.pcpntr_.accept(new PCPntrVisitor<R,A>(), arg);
       return null;
     }    public R visit(grammar.Absyn.ELui p, A arg)
     { /* Code For ELui Goes Here */
@@ -193,7 +197,7 @@ public class VisitSkel
   {
     public R visit(grammar.Absyn.EJ p, A arg)
     { /* Code For EJ Goes Here */
-      p.addr_.accept(new AddrVisitor<R,A>(), arg);
+      p.pcpntr_.accept(new PCPntrVisitor<R,A>(), arg);
       return null;
     }
   }

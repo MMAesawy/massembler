@@ -183,6 +183,21 @@ public class PrettyPrinter
     buf_.delete(0,buf_.length());
     return temp;
   }
+  public static String print(grammar.Absyn.PCPntr foo)
+  {
+    pp(foo, 0);
+    trim();
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
+  public static String show(grammar.Absyn.PCPntr foo)
+  {
+    sh(foo);
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
   public static String print(grammar.Absyn.RInstr foo)
   {
     pp(foo, 0);
@@ -310,13 +325,6 @@ public class PrettyPrinter
        render(")");
        if (_i_ > 0) render(_R_PAREN);
     }
-    else     if (foo instanceof grammar.Absyn.OffLbl)
-    {
-       grammar.Absyn.OffLbl _offlbl = (grammar.Absyn.OffLbl) foo;
-       if (_i_ > 0) render(_L_PAREN);
-       pp(_offlbl.label_, 0);
-       if (_i_ > 0) render(_R_PAREN);
-    }
   }
 
   private static void pp(grammar.Absyn.LblInstr foo, int _i_)
@@ -351,18 +359,29 @@ public class PrettyPrinter
 
   private static void pp(grammar.Absyn.Addr foo, int _i_)
   {
-    if (foo instanceof grammar.Absyn.AddAbs)
-    {
-       grammar.Absyn.AddAbs _addabs = (grammar.Absyn.AddAbs) foo;
-       if (_i_ > 0) render(_L_PAREN);
-       pp(_addabs.imm_, 0);
-       if (_i_ > 0) render(_R_PAREN);
-    }
-    else     if (foo instanceof grammar.Absyn.AddRel)
+    if (foo instanceof grammar.Absyn.AddRel)
     {
        grammar.Absyn.AddRel _addrel = (grammar.Absyn.AddRel) foo;
        if (_i_ > 0) render(_L_PAREN);
        pp(_addrel.offset_, 0);
+       if (_i_ > 0) render(_R_PAREN);
+    }
+  }
+
+  private static void pp(grammar.Absyn.PCPntr foo, int _i_)
+  {
+    if (foo instanceof grammar.Absyn.PCPntrLbl)
+    {
+       grammar.Absyn.PCPntrLbl _pcpntrlbl = (grammar.Absyn.PCPntrLbl) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       pp(_pcpntrlbl.linelabel_, 0);
+       if (_i_ > 0) render(_R_PAREN);
+    }
+    else     if (foo instanceof grammar.Absyn.PCPntrImm)
+    {
+       grammar.Absyn.PCPntrImm _pcpntrimm = (grammar.Absyn.PCPntrImm) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       pp(_pcpntrimm.imm_, 0);
        if (_i_ > 0) render(_R_PAREN);
     }
   }
@@ -522,7 +541,7 @@ public class PrettyPrinter
        render(",");
        pp(_ebne.reg_2, 0);
        render(",");
-       pp(_ebne.addr_, 0);
+       pp(_ebne.pcpntr_, 0);
        if (_i_ > 0) render(_R_PAREN);
     }
     else     if (foo instanceof grammar.Absyn.EBeq)
@@ -534,7 +553,7 @@ public class PrettyPrinter
        render(",");
        pp(_ebeq.reg_2, 0);
        render(",");
-       pp(_ebeq.addr_, 0);
+       pp(_ebeq.pcpntr_, 0);
        if (_i_ > 0) render(_R_PAREN);
     }
     else     if (foo instanceof grammar.Absyn.ELui)
@@ -576,7 +595,7 @@ public class PrettyPrinter
        grammar.Absyn.EJ _ej = (grammar.Absyn.EJ) foo;
        if (_i_ > 0) render(_L_PAREN);
        render("j");
-       pp(_ej.addr_, 0);
+       pp(_ej.pcpntr_, 0);
        if (_i_ > 0) render(_R_PAREN);
     }
   }
@@ -681,14 +700,6 @@ public class PrettyPrinter
        sh(_offrel.reg_);
        render(")");
     }
-    if (foo instanceof grammar.Absyn.OffLbl)
-    {
-       grammar.Absyn.OffLbl _offlbl = (grammar.Absyn.OffLbl) foo;
-       render("(");
-       render("OffLbl");
-       sh(_offlbl.label_);
-       render(")");
-    }
   }
 
   private static void sh(grammar.Absyn.LblInstr foo)
@@ -726,20 +737,32 @@ public class PrettyPrinter
 
   private static void sh(grammar.Absyn.Addr foo)
   {
-    if (foo instanceof grammar.Absyn.AddAbs)
-    {
-       grammar.Absyn.AddAbs _addabs = (grammar.Absyn.AddAbs) foo;
-       render("(");
-       render("AddAbs");
-       sh(_addabs.imm_);
-       render(")");
-    }
     if (foo instanceof grammar.Absyn.AddRel)
     {
        grammar.Absyn.AddRel _addrel = (grammar.Absyn.AddRel) foo;
        render("(");
        render("AddRel");
        sh(_addrel.offset_);
+       render(")");
+    }
+  }
+
+  private static void sh(grammar.Absyn.PCPntr foo)
+  {
+    if (foo instanceof grammar.Absyn.PCPntrLbl)
+    {
+       grammar.Absyn.PCPntrLbl _pcpntrlbl = (grammar.Absyn.PCPntrLbl) foo;
+       render("(");
+       render("PCPntrLbl");
+       sh(_pcpntrlbl.linelabel_);
+       render(")");
+    }
+    if (foo instanceof grammar.Absyn.PCPntrImm)
+    {
+       grammar.Absyn.PCPntrImm _pcpntrimm = (grammar.Absyn.PCPntrImm) foo;
+       render("(");
+       render("PCPntrImm");
+       sh(_pcpntrimm.imm_);
        render(")");
     }
   }
@@ -875,7 +898,7 @@ public class PrettyPrinter
        render("EBne");
        sh(_ebne.reg_1);
        sh(_ebne.reg_2);
-       sh(_ebne.addr_);
+       sh(_ebne.pcpntr_);
        render(")");
     }
     if (foo instanceof grammar.Absyn.EBeq)
@@ -885,7 +908,7 @@ public class PrettyPrinter
        render("EBeq");
        sh(_ebeq.reg_1);
        sh(_ebeq.reg_2);
-       sh(_ebeq.addr_);
+       sh(_ebeq.pcpntr_);
        render(")");
     }
     if (foo instanceof grammar.Absyn.ELui)
@@ -924,7 +947,7 @@ public class PrettyPrinter
        grammar.Absyn.EJ _ej = (grammar.Absyn.EJ) foo;
        render("(");
        render("EJ");
-       sh(_ej.addr_);
+       sh(_ej.pcpntr_);
        render(")");
     }
   }
