@@ -17,7 +17,7 @@ public class Massembler {
     public void reset(){
         programCounter = 0;
         for(int i = 0; i< registers.length;i++){
-            registers[i].set(0);
+            registers[i].setValue(0);
         }
     }
 
@@ -33,26 +33,26 @@ public class Massembler {
 
     public void slt(Register d, Register s, Register t){
         programCounter+=1;
-        if(s.get() < t.get()){
-            d.set(1);
+        if(s.getValue() < t.getValue()){
+            d.setValue(1);
         }
         else
-            d.set(0);
+            d.setValue(0);
 
     }
 
     public void and(Register rd, Register rs, Register rt){
         programCounter+=1;
-        rd.set(rs.get() & rt.get());
+        rd.setValue(rs.getValue() & rt.getValue());
 
     }
 
     public void slti(Register t, Register s, int imm){
 
-        if(s.get() < imm)
-            t.set(1);
+        if(s.getValue() < imm)
+            t.setValue(1);
         else{
-            t.set(0);
+            t.setValue(0);
         }
         programCounter+=1;
 
@@ -60,7 +60,7 @@ public class Massembler {
 
     public void or(Register rd, Register rs, Register rt){
         programCounter+=1;
-        rd.set(rs.get() | rt.get());
+        rd.setValue(rs.getValue() | rt.getValue());
     }
 
     public void addi(Register rd, Register rs, int imm){
@@ -71,45 +71,45 @@ public class Massembler {
     public void andi(Register rd, Register rs, int imm){
         programCounter+=1;
 
-        rd.set(rs.get() & imm);
+        rd.setValue(rs.getValue() & imm);
 
     }
 
     public void ori(Register rd, Register rs, int imm){
         programCounter+=1;
-        rd.set(1);
+        rd.setValue(1);
         if(rs.value == 1 || imm == 1)
-            rd.set(1);
+            rd.setValue(1);
 
     }
 
     public void lw(Register reg1, int address){
         programCounter+=1;
-        reg1.set(mem.get(address));
+        reg1.setValue(mem.get(address));
     }
 
     public void sw(Register reg1, int address){
         programCounter+=1;
-        mem.set(address, reg1.get());
+        mem.set(address, reg1.getValue());
     }
 
     public void lui(Register t, int imm){
         programCounter+=1;
-        t.set(imm<<16);
+        t.setValue(imm<<16);
     }
 
     public void sll(Register d, Register t, int h){
         programCounter+=1;
-        d.set(t.get()<<h);
+        d.setValue(t.getValue()<<h);
     }
 
     public void srl(Register d, Register t, int h){
         programCounter+=1;
-        d.set(t.get()>>h);
+        d.setValue(t.getValue()>>h);
     }
 
     public void beq(Register s, Register t, int offset){
-        if(s.get() == t.get()){
+        if(s.getValue() == t.getValue()){
             programCounter += offset;
         }
         else
@@ -117,7 +117,7 @@ public class Massembler {
     }
 
     public void bne(Register s, Register t, int offset){
-        if(s.get() != t.get()){
+        if(s.getValue() != t.getValue()){
             programCounter += offset;
         }
         else
@@ -129,6 +129,6 @@ public class Massembler {
 
     }
     public void jr(Register s){
-        programCounter = s.get();
+        programCounter = s.getValue();
     }
 }

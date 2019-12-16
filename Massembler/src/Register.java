@@ -3,13 +3,13 @@ public class Register {
     int value;
     public Register(){
         //Sets the value to zero whenever an instance is initialized.
-        set(0);
+        setValue(0);
     }
-    public int get() {
+    public int getValue() {
         return this.value;
     }
 
-    public void set(int num) {
+    public void setValue(int num) {
         this.value = num;
     }
 
