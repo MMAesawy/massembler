@@ -9,23 +9,58 @@ import grammar.Absyn.*;
 
 public class VisitSkel
 {
+  public class ProgramVisitor<R,A> implements Program.Visitor<R,A>
+  {
+    public R visit(grammar.Absyn.PDefs p, A arg)
+    { /* Code For PDefs Goes Here */
+      for (Stmt x: p.liststmt_)
+      { /* ... */ }
+      return null;
+    }
+  }
   public class StmtVisitor<R,A> implements Stmt.Visitor<R,A>
   {
-    public R visit(grammar.Absyn.StmtLblLine p, A arg)
-    { /* Code For StmtLblLine Goes Here */
-      p.lblline_.accept(new LblLineVisitor<R,A>(), arg);
+    public R visit(grammar.Absyn.EStmtLbl p, A arg)
+    { /* Code For EStmtLbl Goes Here */
+      p.lblinstr_.accept(new LblInstrVisitor<R,A>(), arg);
       return null;
-    }    public R visit(grammar.Absyn.StmtType p, A arg)
-    { /* Code For StmtType Goes Here */
-      p.type_.accept(new TypeVisitor<R,A>(), arg);
+    }    public R visit(grammar.Absyn.EStmtInstr p, A arg)
+    { /* Code For EStmtInstr Goes Here */
+      p.instr_.accept(new InstrVisitor<R,A>(), arg);
       return null;
     }
   }
   public class LabelVisitor<R,A> implements Label.Visitor<R,A>
   {
-    public R visit(grammar.Absyn.Lbl1 p, A arg)
-    { /* Code For Lbl1 Goes Here */
-      //p.string_;
+    public R visit(grammar.Absyn.ELbl p, A arg)
+    { /* Code For ELbl Goes Here */
+      //p.linelabel_;
+      return null;
+    }
+  }
+  public class OffsetVisitor<R,A> implements Offset.Visitor<R,A>
+  {
+    public R visit(grammar.Absyn.OffRel p, A arg)
+    { /* Code For OffRel Goes Here */
+      //p.integer_;
+      //p.reg_;
+      return null;
+    }    public R visit(grammar.Absyn.OffLbl p, A arg)
+    { /* Code For OffLbl Goes Here */
+      p.label_.accept(new LabelVisitor<R,A>(), arg);
+      return null;
+    }
+  }
+  public class LblInstrVisitor<R,A> implements LblInstr.Visitor<R,A>
+  {
+    public R visit(grammar.Absyn.LbledStmt p, A arg)
+    { /* Code For LbledStmt Goes Here */
+      p.label_.accept(new LabelVisitor<R,A>(), arg);
+      p.instr_.accept(new InstrVisitor<R,A>(), arg);
+      return null;
+    }    public R visit(grammar.Absyn.LbledLine p, A arg)
+    { /* Code For LbledLine Goes Here */
+      p.label_.accept(new LabelVisitor<R,A>(), arg);
       return null;
     }
   }
@@ -35,129 +70,149 @@ public class VisitSkel
     { /* Code For Immi Goes Here */
       //p.integer_;
       return null;
-    }    public R visit(grammar.Absyn.Imml p, A arg)
-    { /* Code For Imml Goes Here */
-      p.label_.accept(new LabelVisitor<R,A>(), arg);
-      return null;
     }
   }
-  public class RegVisitor<R,A> implements Reg.Visitor<R,A>
+  public class AddrVisitor<R,A> implements Addr.Visitor<R,A>
   {
-    public R visit(grammar.Absyn.Rg p, A arg)
-    { /* Code For Rg Goes Here */
-      //p.char_;
-      //p.integer_;
-      return null;
-    }
-  }
-  public class ROperVisitor<R,A> implements ROper.Visitor<R,A>
-  {
-    public R visit(grammar.Absyn.ROper_add p, A arg)
-    { /* Code For ROper_add Goes Here */
-      return null;
-    }    public R visit(grammar.Absyn.ROper_sub p, A arg)
-    { /* Code For ROper_sub Goes Here */
-      return null;
-    }    public R visit(grammar.Absyn.ROper_and p, A arg)
-    { /* Code For ROper_and Goes Here */
-      return null;
-    }    public R visit(grammar.Absyn.ROper_or p, A arg)
-    { /* Code For ROper_or Goes Here */
-      return null;
-    }    public R visit(grammar.Absyn.ROper_sll p, A arg)
-    { /* Code For ROper_sll Goes Here */
-      return null;
-    }    public R visit(grammar.Absyn.ROper_slt p, A arg)
-    { /* Code For ROper_slt Goes Here */
-      return null;
-    }    public R visit(grammar.Absyn.ROper_jr p, A arg)
-    { /* Code For ROper_jr Goes Here */
-      return null;
-    }    public R visit(grammar.Absyn.ROper_syscall p, A arg)
-    { /* Code For ROper_syscall Goes Here */
-      return null;
-    }
-  }
-  public class IOperVisitor<R,A> implements IOper.Visitor<R,A>
-  {
-    public R visit(grammar.Absyn.IOper_addi p, A arg)
-    { /* Code For IOper_addi Goes Here */
-      return null;
-    }    public R visit(grammar.Absyn.IOper_ori p, A arg)
-    { /* Code For IOper_ori Goes Here */
-      return null;
-    }    public R visit(grammar.Absyn.IOper_andi p, A arg)
-    { /* Code For IOper_andi Goes Here */
-      return null;
-    }    public R visit(grammar.Absyn.IOper_slti p, A arg)
-    { /* Code For IOper_slti Goes Here */
-      return null;
-    }    public R visit(grammar.Absyn.IOper_lui p, A arg)
-    { /* Code For IOper_lui Goes Here */
-      return null;
-    }    public R visit(grammar.Absyn.IOper_beq p, A arg)
-    { /* Code For IOper_beq Goes Here */
-      return null;
-    }    public R visit(grammar.Absyn.IOper_bne p, A arg)
-    { /* Code For IOper_bne Goes Here */
-      return null;
-    }
-  }
-  public class JOperVisitor<R,A> implements JOper.Visitor<R,A>
-  {
-    public R visit(grammar.Absyn.JOper_j p, A arg)
-    { /* Code For JOper_j Goes Here */
-      return null;
-    }
-  }
-  public class TypeVisitor<R,A> implements Type.Visitor<R,A>
-  {
-    public R visit(grammar.Absyn.ER0 p, A arg)
-    { /* Code For ER0 Goes Here */
-      p.roper_.accept(new ROperVisitor<R,A>(), arg);
-      return null;
-    }    public R visit(grammar.Absyn.ER1 p, A arg)
-    { /* Code For ER1 Goes Here */
-      p.roper_.accept(new ROperVisitor<R,A>(), arg);
-      p.reg_.accept(new RegVisitor<R,A>(), arg);
-      return null;
-    }        public R visit(grammar.Absyn.ER2 p, A arg)
-    { /* Code For ER2 Goes Here */
-      p.roper_.accept(new ROperVisitor<R,A>(), arg);
-      p.reg_1.accept(new RegVisitor<R,A>(), arg);
-      p.reg_2.accept(new RegVisitor<R,A>(), arg);
-      return null;
-    }        public R visit(grammar.Absyn.ER3 p, A arg)
-    { /* Code For ER3 Goes Here */
-      p.roper_.accept(new ROperVisitor<R,A>(), arg);
-      p.reg_1.accept(new RegVisitor<R,A>(), arg);
-      p.reg_2.accept(new RegVisitor<R,A>(), arg);
-      p.reg_3.accept(new RegVisitor<R,A>(), arg);
-      return null;
-    }        public R visit(grammar.Absyn.EI p, A arg)
-    { /* Code For EI Goes Here */
-      p.ioper_.accept(new IOperVisitor<R,A>(), arg);
-      p.reg_1.accept(new RegVisitor<R,A>(), arg);
-      p.reg_2.accept(new RegVisitor<R,A>(), arg);
+    public R visit(grammar.Absyn.AddAbs p, A arg)
+    { /* Code For AddAbs Goes Here */
       p.imm_.accept(new ImmVisitor<R,A>(), arg);
       return null;
-    }        public R visit(grammar.Absyn.EJ p, A arg)
+    }    public R visit(grammar.Absyn.AddRel p, A arg)
+    { /* Code For AddRel Goes Here */
+      p.offset_.accept(new OffsetVisitor<R,A>(), arg);
+      return null;
+    }
+  }
+  public class RInstrVisitor<R,A> implements RInstr.Visitor<R,A>
+  {
+    public R visit(grammar.Absyn.EAdd p, A arg)
+    { /* Code For EAdd Goes Here */
+      //p.reg_1;
+      //p.reg_2;
+      //p.reg_3;
+      return null;
+    }    public R visit(grammar.Absyn.ESub p, A arg)
+    { /* Code For ESub Goes Here */
+      //p.reg_1;
+      //p.reg_2;
+      //p.reg_3;
+      return null;
+    }    public R visit(grammar.Absyn.EAnd p, A arg)
+    { /* Code For EAnd Goes Here */
+      //p.reg_1;
+      //p.reg_2;
+      //p.reg_3;
+      return null;
+    }    public R visit(grammar.Absyn.EOr p, A arg)
+    { /* Code For EOr Goes Here */
+      //p.reg_1;
+      //p.reg_2;
+      //p.reg_3;
+      return null;
+    }    public R visit(grammar.Absyn.ESll p, A arg)
+    { /* Code For ESll Goes Here */
+      //p.reg_1;
+      //p.reg_2;
+      p.imm_.accept(new ImmVisitor<R,A>(), arg);
+      return null;
+    }    public R visit(grammar.Absyn.ESrl p, A arg)
+    { /* Code For ESrl Goes Here */
+      //p.reg_1;
+      //p.reg_2;
+      p.imm_.accept(new ImmVisitor<R,A>(), arg);
+      return null;
+    }    public R visit(grammar.Absyn.ESlt p, A arg)
+    { /* Code For ESlt Goes Here */
+      //p.reg_1;
+      //p.reg_2;
+      //p.reg_3;
+      return null;
+    }    public R visit(grammar.Absyn.EJr p, A arg)
+    { /* Code For EJr Goes Here */
+      //p.reg_;
+      return null;
+    }
+  }
+  public class IInstrVisitor<R,A> implements IInstr.Visitor<R,A>
+  {
+    public R visit(grammar.Absyn.EAddi p, A arg)
+    { /* Code For EAddi Goes Here */
+      //p.reg_1;
+      //p.reg_2;
+      p.imm_.accept(new ImmVisitor<R,A>(), arg);
+      return null;
+    }    public R visit(grammar.Absyn.EOri p, A arg)
+    { /* Code For EOri Goes Here */
+      //p.reg_1;
+      //p.reg_2;
+      p.imm_.accept(new ImmVisitor<R,A>(), arg);
+      return null;
+    }    public R visit(grammar.Absyn.EAndi p, A arg)
+    { /* Code For EAndi Goes Here */
+      //p.reg_1;
+      //p.reg_2;
+      p.imm_.accept(new ImmVisitor<R,A>(), arg);
+      return null;
+    }    public R visit(grammar.Absyn.ESlti p, A arg)
+    { /* Code For ESlti Goes Here */
+      //p.reg_1;
+      //p.reg_2;
+      p.imm_.accept(new ImmVisitor<R,A>(), arg);
+      return null;
+    }    public R visit(grammar.Absyn.EBne p, A arg)
+    { /* Code For EBne Goes Here */
+      //p.reg_1;
+      //p.reg_2;
+      p.addr_.accept(new AddrVisitor<R,A>(), arg);
+      return null;
+    }    public R visit(grammar.Absyn.EBeq p, A arg)
+    { /* Code For EBeq Goes Here */
+      //p.reg_1;
+      //p.reg_2;
+      p.addr_.accept(new AddrVisitor<R,A>(), arg);
+      return null;
+    }    public R visit(grammar.Absyn.ELui p, A arg)
+    { /* Code For ELui Goes Here */
+      //p.reg_;
+      p.imm_.accept(new ImmVisitor<R,A>(), arg);
+      return null;
+    }    public R visit(grammar.Absyn.ESw p, A arg)
+    { /* Code For ESw Goes Here */
+      //p.reg_;
+      p.addr_.accept(new AddrVisitor<R,A>(), arg);
+      return null;
+    }    public R visit(grammar.Absyn.ELw p, A arg)
+    { /* Code For ELw Goes Here */
+      //p.reg_;
+      p.addr_.accept(new AddrVisitor<R,A>(), arg);
+      return null;
+    }
+  }
+  public class JInstrVisitor<R,A> implements JInstr.Visitor<R,A>
+  {
+    public R visit(grammar.Absyn.EJ p, A arg)
     { /* Code For EJ Goes Here */
-      p.joper_.accept(new JOperVisitor<R,A>(), arg);
-      p.imm_.accept(new ImmVisitor<R,A>(), arg);
+      p.addr_.accept(new AddrVisitor<R,A>(), arg);
       return null;
-    }        
+    }
   }
-  public class LblLineVisitor<R,A> implements LblLine.Visitor<R,A>
+  public class InstrVisitor<R,A> implements Instr.Visitor<R,A>
   {
-    public R visit(grammar.Absyn.LbledLine p, A arg)
-    { /* Code For LbledLine Goes Here */
-      p.label_.accept(new LabelVisitor<R,A>(), arg);
-      p.type_.accept(new TypeVisitor<R,A>(), arg);
+    public R visit(grammar.Absyn.ESyscall p, A arg)
+    { /* Code For ESyscall Goes Here */
       return null;
-    }    public R visit(grammar.Absyn.LbledLine2 p, A arg)
-    { /* Code For LbledLine2 Goes Here */
-      p.label_.accept(new LabelVisitor<R,A>(), arg);
+    }    public R visit(grammar.Absyn.ERInstr p, A arg)
+    { /* Code For ERInstr Goes Here */
+      p.rinstr_.accept(new RInstrVisitor<R,A>(), arg);
+      return null;
+    }    public R visit(grammar.Absyn.EIInstr p, A arg)
+    { /* Code For EIInstr Goes Here */
+      p.iinstr_.accept(new IInstrVisitor<R,A>(), arg);
+      return null;
+    }    public R visit(grammar.Absyn.EJInstr p, A arg)
+    { /* Code For EJInstr Goes Here */
+      p.jinstr_.accept(new JInstrVisitor<R,A>(), arg);
       return null;
     }
   }

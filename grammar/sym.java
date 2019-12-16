@@ -9,7 +9,6 @@ package grammar;
 public class sym {
   /* terminals */
   public static final int _INTEGER_ = 25;
-  public static final int _STRING_ = 23;
   public static final int _SYMB_19 = 21;
   public static final int _SYMB_18 = 20;
   public static final int _SYMB_17 = 19;
@@ -22,10 +21,10 @@ public class sym {
   public static final int _SYMB_11 = 13;
   public static final int _SYMB_10 = 12;
   public static final int _SYMB_8 = 10;
-  public static final int _CHAR_ = 24;
   public static final int _SYMB_7 = 9;
   public static final int _SYMB_6 = 8;
   public static final int _SYMB_5 = 7;
+  public static final int Reg = 26;
   public static final int _SYMB_4 = 6;
   public static final int EOF = 0;
   public static final int _SYMB_3 = 5;
@@ -33,7 +32,10 @@ public class sym {
   public static final int _SYMB_1 = 3;
   public static final int _SYMB_0 = 2;
   public static final int error = 1;
+  public static final int _SYMB_22 = 24;
+  public static final int _SYMB_21 = 23;
   public static final int _SYMB_20 = 22;
+  public static final int LineLabel = 27;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
@@ -58,9 +60,11 @@ public class sym {
   "_SYMB_18",
   "_SYMB_19",
   "_SYMB_20",
-  "_STRING_",
-  "_CHAR_",
-  "_INTEGER_"
+  "_SYMB_21",
+  "_SYMB_22",
+  "_INTEGER_",
+  "Reg",
+  "LineLabel"
   };
 }
 

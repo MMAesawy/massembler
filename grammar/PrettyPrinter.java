@@ -63,6 +63,36 @@ public class PrettyPrinter
 
 
   //  print and show methods are defined for each category.
+  public static String print(grammar.Absyn.Program foo)
+  {
+    pp(foo, 0);
+    trim();
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
+  public static String show(grammar.Absyn.Program foo)
+  {
+    sh(foo);
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
+  public static String print(grammar.Absyn.ListStmt foo)
+  {
+    pp(foo, 0);
+    trim();
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
+  public static String show(grammar.Absyn.ListStmt foo)
+  {
+    sh(foo);
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
   public static String print(grammar.Absyn.Stmt foo)
   {
     pp(foo, 0);
@@ -93,6 +123,36 @@ public class PrettyPrinter
     buf_.delete(0,buf_.length());
     return temp;
   }
+  public static String print(grammar.Absyn.Offset foo)
+  {
+    pp(foo, 0);
+    trim();
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
+  public static String show(grammar.Absyn.Offset foo)
+  {
+    sh(foo);
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
+  public static String print(grammar.Absyn.LblInstr foo)
+  {
+    pp(foo, 0);
+    trim();
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
+  public static String show(grammar.Absyn.LblInstr foo)
+  {
+    sh(foo);
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
   public static String print(grammar.Absyn.Imm foo)
   {
     pp(foo, 0);
@@ -108,7 +168,7 @@ public class PrettyPrinter
     buf_.delete(0,buf_.length());
     return temp;
   }
-  public static String print(grammar.Absyn.Reg foo)
+  public static String print(grammar.Absyn.Addr foo)
   {
     pp(foo, 0);
     trim();
@@ -116,14 +176,14 @@ public class PrettyPrinter
     buf_.delete(0,buf_.length());
     return temp;
   }
-  public static String show(grammar.Absyn.Reg foo)
+  public static String show(grammar.Absyn.Addr foo)
   {
     sh(foo);
     String temp = buf_.toString();
     buf_.delete(0,buf_.length());
     return temp;
   }
-  public static String print(grammar.Absyn.ROper foo)
+  public static String print(grammar.Absyn.RInstr foo)
   {
     pp(foo, 0);
     trim();
@@ -131,14 +191,14 @@ public class PrettyPrinter
     buf_.delete(0,buf_.length());
     return temp;
   }
-  public static String show(grammar.Absyn.ROper foo)
+  public static String show(grammar.Absyn.RInstr foo)
   {
     sh(foo);
     String temp = buf_.toString();
     buf_.delete(0,buf_.length());
     return temp;
   }
-  public static String print(grammar.Absyn.IOper foo)
+  public static String print(grammar.Absyn.IInstr foo)
   {
     pp(foo, 0);
     trim();
@@ -146,14 +206,14 @@ public class PrettyPrinter
     buf_.delete(0,buf_.length());
     return temp;
   }
-  public static String show(grammar.Absyn.IOper foo)
+  public static String show(grammar.Absyn.IInstr foo)
   {
     sh(foo);
     String temp = buf_.toString();
     buf_.delete(0,buf_.length());
     return temp;
   }
-  public static String print(grammar.Absyn.JOper foo)
+  public static String print(grammar.Absyn.JInstr foo)
   {
     pp(foo, 0);
     trim();
@@ -161,14 +221,14 @@ public class PrettyPrinter
     buf_.delete(0,buf_.length());
     return temp;
   }
-  public static String show(grammar.Absyn.JOper foo)
+  public static String show(grammar.Absyn.JInstr foo)
   {
     sh(foo);
     String temp = buf_.toString();
     buf_.delete(0,buf_.length());
     return temp;
   }
-  public static String print(grammar.Absyn.Type foo)
+  public static String print(grammar.Absyn.Instr foo)
   {
     pp(foo, 0);
     trim();
@@ -176,22 +236,7 @@ public class PrettyPrinter
     buf_.delete(0,buf_.length());
     return temp;
   }
-  public static String show(grammar.Absyn.Type foo)
-  {
-    sh(foo);
-    String temp = buf_.toString();
-    buf_.delete(0,buf_.length());
-    return temp;
-  }
-  public static String print(grammar.Absyn.LblLine foo)
-  {
-    pp(foo, 0);
-    trim();
-    String temp = buf_.toString();
-    buf_.delete(0,buf_.length());
-    return temp;
-  }
-  public static String show(grammar.Absyn.LblLine foo)
+  public static String show(grammar.Absyn.Instr foo)
   {
     sh(foo);
     String temp = buf_.toString();
@@ -200,32 +245,95 @@ public class PrettyPrinter
   }
   /***   You shouldn't need to change anything beyond this point.   ***/
 
-  private static void pp(grammar.Absyn.Stmt foo, int _i_)
+  private static void pp(grammar.Absyn.Program foo, int _i_)
   {
-    if (foo instanceof grammar.Absyn.StmtLblLine)
+    if (foo instanceof grammar.Absyn.PDefs)
     {
-       grammar.Absyn.StmtLblLine _stmtlblline = (grammar.Absyn.StmtLblLine) foo;
+       grammar.Absyn.PDefs _pdefs = (grammar.Absyn.PDefs) foo;
        if (_i_ > 0) render(_L_PAREN);
-       pp(_stmtlblline.lblline_, 0);
+       pp(_pdefs.liststmt_, 0);
        if (_i_ > 0) render(_R_PAREN);
     }
-    else     if (foo instanceof grammar.Absyn.StmtType)
+  }
+
+  private static void pp(grammar.Absyn.ListStmt foo, int _i_)
+  {
+     for (java.util.Iterator<Stmt> it = foo.iterator(); it.hasNext();)
+     {
+       pp(it.next(), _i_);
+       if (it.hasNext()) {
+         render("");
+       } else {
+         render("");
+       }
+     }  }
+
+  private static void pp(grammar.Absyn.Stmt foo, int _i_)
+  {
+    if (foo instanceof grammar.Absyn.EStmtLbl)
     {
-       grammar.Absyn.StmtType _stmttype = (grammar.Absyn.StmtType) foo;
+       grammar.Absyn.EStmtLbl _estmtlbl = (grammar.Absyn.EStmtLbl) foo;
        if (_i_ > 0) render(_L_PAREN);
-       pp(_stmttype.type_, 0);
+       pp(_estmtlbl.lblinstr_, 0);
+       if (_i_ > 0) render(_R_PAREN);
+    }
+    else     if (foo instanceof grammar.Absyn.EStmtInstr)
+    {
+       grammar.Absyn.EStmtInstr _estmtinstr = (grammar.Absyn.EStmtInstr) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       pp(_estmtinstr.instr_, 0);
        if (_i_ > 0) render(_R_PAREN);
     }
   }
 
   private static void pp(grammar.Absyn.Label foo, int _i_)
   {
-    if (foo instanceof grammar.Absyn.Lbl1)
+    if (foo instanceof grammar.Absyn.ELbl)
     {
-       grammar.Absyn.Lbl1 _lbl1 = (grammar.Absyn.Lbl1) foo;
+       grammar.Absyn.ELbl _elbl = (grammar.Absyn.ELbl) foo;
        if (_i_ > 0) render(_L_PAREN);
-       pp(_lbl1.string_, 0);
+       pp(_elbl.linelabel_, 0);
        render(":");
+       if (_i_ > 0) render(_R_PAREN);
+    }
+  }
+
+  private static void pp(grammar.Absyn.Offset foo, int _i_)
+  {
+    if (foo instanceof grammar.Absyn.OffRel)
+    {
+       grammar.Absyn.OffRel _offrel = (grammar.Absyn.OffRel) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       pp(_offrel.integer_, 0);
+       render("(");
+       pp(_offrel.reg_, 0);
+       render(")");
+       if (_i_ > 0) render(_R_PAREN);
+    }
+    else     if (foo instanceof grammar.Absyn.OffLbl)
+    {
+       grammar.Absyn.OffLbl _offlbl = (grammar.Absyn.OffLbl) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       pp(_offlbl.label_, 0);
+       if (_i_ > 0) render(_R_PAREN);
+    }
+  }
+
+  private static void pp(grammar.Absyn.LblInstr foo, int _i_)
+  {
+    if (foo instanceof grammar.Absyn.LbledStmt)
+    {
+       grammar.Absyn.LbledStmt _lbledstmt = (grammar.Absyn.LbledStmt) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       pp(_lbledstmt.label_, 0);
+       pp(_lbledstmt.instr_, 0);
+       if (_i_ > 0) render(_R_PAREN);
+    }
+    else     if (foo instanceof grammar.Absyn.LbledLine)
+    {
+       grammar.Absyn.LbledLine _lbledline = (grammar.Absyn.LbledLine) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       pp(_lbledline.label_, 0);
        if (_i_ > 0) render(_R_PAREN);
     }
   }
@@ -239,261 +347,367 @@ public class PrettyPrinter
        pp(_immi.integer_, 0);
        if (_i_ > 0) render(_R_PAREN);
     }
-    else     if (foo instanceof grammar.Absyn.Imml)
+  }
+
+  private static void pp(grammar.Absyn.Addr foo, int _i_)
+  {
+    if (foo instanceof grammar.Absyn.AddAbs)
     {
-       grammar.Absyn.Imml _imml = (grammar.Absyn.Imml) foo;
+       grammar.Absyn.AddAbs _addabs = (grammar.Absyn.AddAbs) foo;
        if (_i_ > 0) render(_L_PAREN);
-       pp(_imml.label_, 0);
+       pp(_addabs.imm_, 0);
+       if (_i_ > 0) render(_R_PAREN);
+    }
+    else     if (foo instanceof grammar.Absyn.AddRel)
+    {
+       grammar.Absyn.AddRel _addrel = (grammar.Absyn.AddRel) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       pp(_addrel.offset_, 0);
        if (_i_ > 0) render(_R_PAREN);
     }
   }
 
-  private static void pp(grammar.Absyn.Reg foo, int _i_)
+  private static void pp(grammar.Absyn.RInstr foo, int _i_)
   {
-    if (foo instanceof grammar.Absyn.Rg)
+    if (foo instanceof grammar.Absyn.EAdd)
     {
-       grammar.Absyn.Rg _rg = (grammar.Absyn.Rg) foo;
-       if (_i_ > 0) render(_L_PAREN);
-       render("$");
-       pp(_rg.char_, 0);
-       pp(_rg.integer_, 0);
-       if (_i_ > 0) render(_R_PAREN);
-    }
-  }
-
-  private static void pp(grammar.Absyn.ROper foo, int _i_)
-  {
-    if (foo instanceof grammar.Absyn.ROper_add)
-    {
-       grammar.Absyn.ROper_add _roper_add = (grammar.Absyn.ROper_add) foo;
+       grammar.Absyn.EAdd _eadd = (grammar.Absyn.EAdd) foo;
        if (_i_ > 0) render(_L_PAREN);
        render("add");
+       pp(_eadd.reg_1, 0);
+       render(",");
+       pp(_eadd.reg_2, 0);
+       render(",");
+       pp(_eadd.reg_3, 0);
        if (_i_ > 0) render(_R_PAREN);
     }
-    else     if (foo instanceof grammar.Absyn.ROper_sub)
+    else     if (foo instanceof grammar.Absyn.ESub)
     {
-       grammar.Absyn.ROper_sub _roper_sub = (grammar.Absyn.ROper_sub) foo;
+       grammar.Absyn.ESub _esub = (grammar.Absyn.ESub) foo;
        if (_i_ > 0) render(_L_PAREN);
        render("sub");
+       pp(_esub.reg_1, 0);
+       render(",");
+       pp(_esub.reg_2, 0);
+       render(",");
+       pp(_esub.reg_3, 0);
        if (_i_ > 0) render(_R_PAREN);
     }
-    else     if (foo instanceof grammar.Absyn.ROper_and)
+    else     if (foo instanceof grammar.Absyn.EAnd)
     {
-       grammar.Absyn.ROper_and _roper_and = (grammar.Absyn.ROper_and) foo;
+       grammar.Absyn.EAnd _eand = (grammar.Absyn.EAnd) foo;
        if (_i_ > 0) render(_L_PAREN);
        render("and");
+       pp(_eand.reg_1, 0);
+       render(",");
+       pp(_eand.reg_2, 0);
+       render(",");
+       pp(_eand.reg_3, 0);
        if (_i_ > 0) render(_R_PAREN);
     }
-    else     if (foo instanceof grammar.Absyn.ROper_or)
+    else     if (foo instanceof grammar.Absyn.EOr)
     {
-       grammar.Absyn.ROper_or _roper_or = (grammar.Absyn.ROper_or) foo;
+       grammar.Absyn.EOr _eor = (grammar.Absyn.EOr) foo;
        if (_i_ > 0) render(_L_PAREN);
        render("or");
+       pp(_eor.reg_1, 0);
+       render(",");
+       pp(_eor.reg_2, 0);
+       render(",");
+       pp(_eor.reg_3, 0);
        if (_i_ > 0) render(_R_PAREN);
     }
-    else     if (foo instanceof grammar.Absyn.ROper_sll)
+    else     if (foo instanceof grammar.Absyn.ESll)
     {
-       grammar.Absyn.ROper_sll _roper_sll = (grammar.Absyn.ROper_sll) foo;
+       grammar.Absyn.ESll _esll = (grammar.Absyn.ESll) foo;
        if (_i_ > 0) render(_L_PAREN);
        render("sll");
+       pp(_esll.reg_1, 0);
+       render(",");
+       pp(_esll.reg_2, 0);
+       render(",");
+       pp(_esll.imm_, 0);
        if (_i_ > 0) render(_R_PAREN);
     }
-    else     if (foo instanceof grammar.Absyn.ROper_slt)
+    else     if (foo instanceof grammar.Absyn.ESrl)
     {
-       grammar.Absyn.ROper_slt _roper_slt = (grammar.Absyn.ROper_slt) foo;
+       grammar.Absyn.ESrl _esrl = (grammar.Absyn.ESrl) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       render("srl");
+       pp(_esrl.reg_1, 0);
+       render(",");
+       pp(_esrl.reg_2, 0);
+       render(",");
+       pp(_esrl.imm_, 0);
+       if (_i_ > 0) render(_R_PAREN);
+    }
+    else     if (foo instanceof grammar.Absyn.ESlt)
+    {
+       grammar.Absyn.ESlt _eslt = (grammar.Absyn.ESlt) foo;
        if (_i_ > 0) render(_L_PAREN);
        render("slt");
+       pp(_eslt.reg_1, 0);
+       render(",");
+       pp(_eslt.reg_2, 0);
+       render(",");
+       pp(_eslt.reg_3, 0);
        if (_i_ > 0) render(_R_PAREN);
     }
-    else     if (foo instanceof grammar.Absyn.ROper_jr)
+    else     if (foo instanceof grammar.Absyn.EJr)
     {
-       grammar.Absyn.ROper_jr _roper_jr = (grammar.Absyn.ROper_jr) foo;
+       grammar.Absyn.EJr _ejr = (grammar.Absyn.EJr) foo;
        if (_i_ > 0) render(_L_PAREN);
        render("jr");
+       pp(_ejr.reg_, 0);
        if (_i_ > 0) render(_R_PAREN);
     }
-    else     if (foo instanceof grammar.Absyn.ROper_syscall)
+  }
+
+  private static void pp(grammar.Absyn.IInstr foo, int _i_)
+  {
+    if (foo instanceof grammar.Absyn.EAddi)
     {
-       grammar.Absyn.ROper_syscall _roper_syscall = (grammar.Absyn.ROper_syscall) foo;
+       grammar.Absyn.EAddi _eaddi = (grammar.Absyn.EAddi) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       render("addi");
+       pp(_eaddi.reg_1, 0);
+       render(",");
+       pp(_eaddi.reg_2, 0);
+       render(",");
+       pp(_eaddi.imm_, 0);
+       if (_i_ > 0) render(_R_PAREN);
+    }
+    else     if (foo instanceof grammar.Absyn.EOri)
+    {
+       grammar.Absyn.EOri _eori = (grammar.Absyn.EOri) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       render("ori");
+       pp(_eori.reg_1, 0);
+       render(",");
+       pp(_eori.reg_2, 0);
+       render(",");
+       pp(_eori.imm_, 0);
+       if (_i_ > 0) render(_R_PAREN);
+    }
+    else     if (foo instanceof grammar.Absyn.EAndi)
+    {
+       grammar.Absyn.EAndi _eandi = (grammar.Absyn.EAndi) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       render("andi");
+       pp(_eandi.reg_1, 0);
+       render(",");
+       pp(_eandi.reg_2, 0);
+       render(",");
+       pp(_eandi.imm_, 0);
+       if (_i_ > 0) render(_R_PAREN);
+    }
+    else     if (foo instanceof grammar.Absyn.ESlti)
+    {
+       grammar.Absyn.ESlti _eslti = (grammar.Absyn.ESlti) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       render("slti");
+       pp(_eslti.reg_1, 0);
+       render(",");
+       pp(_eslti.reg_2, 0);
+       render(",");
+       pp(_eslti.imm_, 0);
+       if (_i_ > 0) render(_R_PAREN);
+    }
+    else     if (foo instanceof grammar.Absyn.EBne)
+    {
+       grammar.Absyn.EBne _ebne = (grammar.Absyn.EBne) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       render("bne");
+       pp(_ebne.reg_1, 0);
+       render(",");
+       pp(_ebne.reg_2, 0);
+       render(",");
+       pp(_ebne.addr_, 0);
+       if (_i_ > 0) render(_R_PAREN);
+    }
+    else     if (foo instanceof grammar.Absyn.EBeq)
+    {
+       grammar.Absyn.EBeq _ebeq = (grammar.Absyn.EBeq) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       render("beq");
+       pp(_ebeq.reg_1, 0);
+       render(",");
+       pp(_ebeq.reg_2, 0);
+       render(",");
+       pp(_ebeq.addr_, 0);
+       if (_i_ > 0) render(_R_PAREN);
+    }
+    else     if (foo instanceof grammar.Absyn.ELui)
+    {
+       grammar.Absyn.ELui _elui = (grammar.Absyn.ELui) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       render("lui");
+       pp(_elui.reg_, 0);
+       render(",");
+       pp(_elui.imm_, 0);
+       if (_i_ > 0) render(_R_PAREN);
+    }
+    else     if (foo instanceof grammar.Absyn.ESw)
+    {
+       grammar.Absyn.ESw _esw = (grammar.Absyn.ESw) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       render("sw");
+       pp(_esw.reg_, 0);
+       render(",");
+       pp(_esw.addr_, 0);
+       if (_i_ > 0) render(_R_PAREN);
+    }
+    else     if (foo instanceof grammar.Absyn.ELw)
+    {
+       grammar.Absyn.ELw _elw = (grammar.Absyn.ELw) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       render("lw");
+       pp(_elw.reg_, 0);
+       render(",");
+       pp(_elw.addr_, 0);
+       if (_i_ > 0) render(_R_PAREN);
+    }
+  }
+
+  private static void pp(grammar.Absyn.JInstr foo, int _i_)
+  {
+    if (foo instanceof grammar.Absyn.EJ)
+    {
+       grammar.Absyn.EJ _ej = (grammar.Absyn.EJ) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       render("j");
+       pp(_ej.addr_, 0);
+       if (_i_ > 0) render(_R_PAREN);
+    }
+  }
+
+  private static void pp(grammar.Absyn.Instr foo, int _i_)
+  {
+    if (foo instanceof grammar.Absyn.ESyscall)
+    {
+       grammar.Absyn.ESyscall _esyscall = (grammar.Absyn.ESyscall) foo;
        if (_i_ > 0) render(_L_PAREN);
        render("syscall");
        if (_i_ > 0) render(_R_PAREN);
     }
+    else     if (foo instanceof grammar.Absyn.ERInstr)
+    {
+       grammar.Absyn.ERInstr _erinstr = (grammar.Absyn.ERInstr) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       pp(_erinstr.rinstr_, 0);
+       if (_i_ > 0) render(_R_PAREN);
+    }
+    else     if (foo instanceof grammar.Absyn.EIInstr)
+    {
+       grammar.Absyn.EIInstr _eiinstr = (grammar.Absyn.EIInstr) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       pp(_eiinstr.iinstr_, 0);
+       if (_i_ > 0) render(_R_PAREN);
+    }
+    else     if (foo instanceof grammar.Absyn.EJInstr)
+    {
+       grammar.Absyn.EJInstr _ejinstr = (grammar.Absyn.EJInstr) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       pp(_ejinstr.jinstr_, 0);
+       if (_i_ > 0) render(_R_PAREN);
+    }
   }
 
-  private static void pp(grammar.Absyn.IOper foo, int _i_)
+
+  private static void sh(grammar.Absyn.Program foo)
   {
-    if (foo instanceof grammar.Absyn.IOper_addi)
+    if (foo instanceof grammar.Absyn.PDefs)
     {
-       grammar.Absyn.IOper_addi _ioper_addi = (grammar.Absyn.IOper_addi) foo;
-       if (_i_ > 0) render(_L_PAREN);
-       render("addi");
-       if (_i_ > 0) render(_R_PAREN);
-    }
-    else     if (foo instanceof grammar.Absyn.IOper_ori)
-    {
-       grammar.Absyn.IOper_ori _ioper_ori = (grammar.Absyn.IOper_ori) foo;
-       if (_i_ > 0) render(_L_PAREN);
-       render("ori");
-       if (_i_ > 0) render(_R_PAREN);
-    }
-    else     if (foo instanceof grammar.Absyn.IOper_andi)
-    {
-       grammar.Absyn.IOper_andi _ioper_andi = (grammar.Absyn.IOper_andi) foo;
-       if (_i_ > 0) render(_L_PAREN);
-       render("andi");
-       if (_i_ > 0) render(_R_PAREN);
-    }
-    else     if (foo instanceof grammar.Absyn.IOper_slti)
-    {
-       grammar.Absyn.IOper_slti _ioper_slti = (grammar.Absyn.IOper_slti) foo;
-       if (_i_ > 0) render(_L_PAREN);
-       render("slti");
-       if (_i_ > 0) render(_R_PAREN);
-    }
-    else     if (foo instanceof grammar.Absyn.IOper_lui)
-    {
-       grammar.Absyn.IOper_lui _ioper_lui = (grammar.Absyn.IOper_lui) foo;
-       if (_i_ > 0) render(_L_PAREN);
-       render("lui");
-       if (_i_ > 0) render(_R_PAREN);
-    }
-    else     if (foo instanceof grammar.Absyn.IOper_beq)
-    {
-       grammar.Absyn.IOper_beq _ioper_beq = (grammar.Absyn.IOper_beq) foo;
-       if (_i_ > 0) render(_L_PAREN);
-       render("beq");
-       if (_i_ > 0) render(_R_PAREN);
-    }
-    else     if (foo instanceof grammar.Absyn.IOper_bne)
-    {
-       grammar.Absyn.IOper_bne _ioper_bne = (grammar.Absyn.IOper_bne) foo;
-       if (_i_ > 0) render(_L_PAREN);
-       render("bne");
-       if (_i_ > 0) render(_R_PAREN);
+       grammar.Absyn.PDefs _pdefs = (grammar.Absyn.PDefs) foo;
+       render("(");
+       render("PDefs");
+       render("[");
+       sh(_pdefs.liststmt_);
+       render("]");
+       render(")");
     }
   }
 
-  private static void pp(grammar.Absyn.JOper foo, int _i_)
+  private static void sh(grammar.Absyn.ListStmt foo)
   {
-    if (foo instanceof grammar.Absyn.JOper_j)
-    {
-       grammar.Absyn.JOper_j _joper_j = (grammar.Absyn.JOper_j) foo;
-       if (_i_ > 0) render(_L_PAREN);
-       render("j");
-       if (_i_ > 0) render(_R_PAREN);
-    }
+     for (java.util.Iterator<Stmt> it = foo.iterator(); it.hasNext();)
+     {
+       sh(it.next());
+       if (it.hasNext())
+         render(",");
+     }
   }
-
-  private static void pp(grammar.Absyn.Type foo, int _i_)
-  {
-    if (foo instanceof grammar.Absyn.ER0)
-    {
-       grammar.Absyn.ER0 _er0 = (grammar.Absyn.ER0) foo;
-       if (_i_ > 0) render(_L_PAREN);
-       pp(_er0.roper_, 0);
-       if (_i_ > 0) render(_R_PAREN);
-    }
-    else     if (foo instanceof grammar.Absyn.ER1)
-    {
-       grammar.Absyn.ER1 _er1 = (grammar.Absyn.ER1) foo;
-       if (_i_ > 1) render(_L_PAREN);
-       pp(_er1.roper_, 0);
-       pp(_er1.reg_, 0);
-       if (_i_ > 1) render(_R_PAREN);
-    }
-    else     if (foo instanceof grammar.Absyn.ER2)
-    {
-       grammar.Absyn.ER2 _er2 = (grammar.Absyn.ER2) foo;
-       if (_i_ > 2) render(_L_PAREN);
-       pp(_er2.roper_, 0);
-       pp(_er2.reg_1, 0);
-       render(",");
-       pp(_er2.reg_2, 0);
-       if (_i_ > 2) render(_R_PAREN);
-    }
-    else     if (foo instanceof grammar.Absyn.ER3)
-    {
-       grammar.Absyn.ER3 _er3 = (grammar.Absyn.ER3) foo;
-       if (_i_ > 3) render(_L_PAREN);
-       pp(_er3.roper_, 0);
-       pp(_er3.reg_1, 0);
-       render(",");
-       pp(_er3.reg_2, 0);
-       render(",");
-       pp(_er3.reg_3, 0);
-       if (_i_ > 3) render(_R_PAREN);
-    }
-    else     if (foo instanceof grammar.Absyn.EI)
-    {
-       grammar.Absyn.EI _ei = (grammar.Absyn.EI) foo;
-       if (_i_ > 4) render(_L_PAREN);
-       pp(_ei.ioper_, 0);
-       pp(_ei.reg_1, 0);
-       render(",");
-       pp(_ei.reg_2, 0);
-       render(",");
-       pp(_ei.imm_, 0);
-       if (_i_ > 4) render(_R_PAREN);
-    }
-    else     if (foo instanceof grammar.Absyn.EJ)
-    {
-       grammar.Absyn.EJ _ej = (grammar.Absyn.EJ) foo;
-       if (_i_ > 5) render(_L_PAREN);
-       pp(_ej.joper_, 0);
-       pp(_ej.imm_, 0);
-       if (_i_ > 5) render(_R_PAREN);
-    }
-  }
-
-  private static void pp(grammar.Absyn.LblLine foo, int _i_)
-  {
-    if (foo instanceof grammar.Absyn.LbledLine)
-    {
-       grammar.Absyn.LbledLine _lbledline = (grammar.Absyn.LbledLine) foo;
-       if (_i_ > 0) render(_L_PAREN);
-       pp(_lbledline.label_, 0);
-       pp(_lbledline.type_, 5);
-       if (_i_ > 0) render(_R_PAREN);
-    }
-    else     if (foo instanceof grammar.Absyn.LbledLine2)
-    {
-       grammar.Absyn.LbledLine2 _lbledline2 = (grammar.Absyn.LbledLine2) foo;
-       if (_i_ > 0) render(_L_PAREN);
-       pp(_lbledline2.label_, 0);
-       if (_i_ > 0) render(_R_PAREN);
-    }
-  }
-
 
   private static void sh(grammar.Absyn.Stmt foo)
   {
-    if (foo instanceof grammar.Absyn.StmtLblLine)
+    if (foo instanceof grammar.Absyn.EStmtLbl)
     {
-       grammar.Absyn.StmtLblLine _stmtlblline = (grammar.Absyn.StmtLblLine) foo;
+       grammar.Absyn.EStmtLbl _estmtlbl = (grammar.Absyn.EStmtLbl) foo;
        render("(");
-       render("StmtLblLine");
-       sh(_stmtlblline.lblline_);
+       render("EStmtLbl");
+       sh(_estmtlbl.lblinstr_);
        render(")");
     }
-    if (foo instanceof grammar.Absyn.StmtType)
+    if (foo instanceof grammar.Absyn.EStmtInstr)
     {
-       grammar.Absyn.StmtType _stmttype = (grammar.Absyn.StmtType) foo;
+       grammar.Absyn.EStmtInstr _estmtinstr = (grammar.Absyn.EStmtInstr) foo;
        render("(");
-       render("StmtType");
-       sh(_stmttype.type_);
+       render("EStmtInstr");
+       sh(_estmtinstr.instr_);
        render(")");
     }
   }
 
   private static void sh(grammar.Absyn.Label foo)
   {
-    if (foo instanceof grammar.Absyn.Lbl1)
+    if (foo instanceof grammar.Absyn.ELbl)
     {
-       grammar.Absyn.Lbl1 _lbl1 = (grammar.Absyn.Lbl1) foo;
+       grammar.Absyn.ELbl _elbl = (grammar.Absyn.ELbl) foo;
        render("(");
-       render("Lbl1");
-       sh(_lbl1.string_);
+       render("ELbl");
+       sh(_elbl.linelabel_);
+       render(")");
+    }
+  }
+
+  private static void sh(grammar.Absyn.Offset foo)
+  {
+    if (foo instanceof grammar.Absyn.OffRel)
+    {
+       grammar.Absyn.OffRel _offrel = (grammar.Absyn.OffRel) foo;
+       render("(");
+       render("OffRel");
+       sh(_offrel.integer_);
+       sh(_offrel.reg_);
+       render(")");
+    }
+    if (foo instanceof grammar.Absyn.OffLbl)
+    {
+       grammar.Absyn.OffLbl _offlbl = (grammar.Absyn.OffLbl) foo;
+       render("(");
+       render("OffLbl");
+       sh(_offlbl.label_);
+       render(")");
+    }
+  }
+
+  private static void sh(grammar.Absyn.LblInstr foo)
+  {
+    if (foo instanceof grammar.Absyn.LbledStmt)
+    {
+       grammar.Absyn.LbledStmt _lbledstmt = (grammar.Absyn.LbledStmt) foo;
+       render("(");
+       render("LbledStmt");
+       sh(_lbledstmt.label_);
+       sh(_lbledstmt.instr_);
+       render(")");
+    }
+    if (foo instanceof grammar.Absyn.LbledLine)
+    {
+       grammar.Absyn.LbledLine _lbledline = (grammar.Absyn.LbledLine) foo;
+       render("(");
+       render("LbledLine");
+       sh(_lbledline.label_);
        render(")");
     }
   }
@@ -508,200 +722,242 @@ public class PrettyPrinter
        sh(_immi.integer_);
        render(")");
     }
-    if (foo instanceof grammar.Absyn.Imml)
+  }
+
+  private static void sh(grammar.Absyn.Addr foo)
+  {
+    if (foo instanceof grammar.Absyn.AddAbs)
     {
-       grammar.Absyn.Imml _imml = (grammar.Absyn.Imml) foo;
+       grammar.Absyn.AddAbs _addabs = (grammar.Absyn.AddAbs) foo;
        render("(");
-       render("Imml");
-       sh(_imml.label_);
+       render("AddAbs");
+       sh(_addabs.imm_);
+       render(")");
+    }
+    if (foo instanceof grammar.Absyn.AddRel)
+    {
+       grammar.Absyn.AddRel _addrel = (grammar.Absyn.AddRel) foo;
+       render("(");
+       render("AddRel");
+       sh(_addrel.offset_);
        render(")");
     }
   }
 
-  private static void sh(grammar.Absyn.Reg foo)
+  private static void sh(grammar.Absyn.RInstr foo)
   {
-    if (foo instanceof grammar.Absyn.Rg)
+    if (foo instanceof grammar.Absyn.EAdd)
     {
-       grammar.Absyn.Rg _rg = (grammar.Absyn.Rg) foo;
+       grammar.Absyn.EAdd _eadd = (grammar.Absyn.EAdd) foo;
        render("(");
-       render("Rg");
-       sh(_rg.char_);
-       sh(_rg.integer_);
+       render("EAdd");
+       sh(_eadd.reg_1);
+       sh(_eadd.reg_2);
+       sh(_eadd.reg_3);
+       render(")");
+    }
+    if (foo instanceof grammar.Absyn.ESub)
+    {
+       grammar.Absyn.ESub _esub = (grammar.Absyn.ESub) foo;
+       render("(");
+       render("ESub");
+       sh(_esub.reg_1);
+       sh(_esub.reg_2);
+       sh(_esub.reg_3);
+       render(")");
+    }
+    if (foo instanceof grammar.Absyn.EAnd)
+    {
+       grammar.Absyn.EAnd _eand = (grammar.Absyn.EAnd) foo;
+       render("(");
+       render("EAnd");
+       sh(_eand.reg_1);
+       sh(_eand.reg_2);
+       sh(_eand.reg_3);
+       render(")");
+    }
+    if (foo instanceof grammar.Absyn.EOr)
+    {
+       grammar.Absyn.EOr _eor = (grammar.Absyn.EOr) foo;
+       render("(");
+       render("EOr");
+       sh(_eor.reg_1);
+       sh(_eor.reg_2);
+       sh(_eor.reg_3);
+       render(")");
+    }
+    if (foo instanceof grammar.Absyn.ESll)
+    {
+       grammar.Absyn.ESll _esll = (grammar.Absyn.ESll) foo;
+       render("(");
+       render("ESll");
+       sh(_esll.reg_1);
+       sh(_esll.reg_2);
+       sh(_esll.imm_);
+       render(")");
+    }
+    if (foo instanceof grammar.Absyn.ESrl)
+    {
+       grammar.Absyn.ESrl _esrl = (grammar.Absyn.ESrl) foo;
+       render("(");
+       render("ESrl");
+       sh(_esrl.reg_1);
+       sh(_esrl.reg_2);
+       sh(_esrl.imm_);
+       render(")");
+    }
+    if (foo instanceof grammar.Absyn.ESlt)
+    {
+       grammar.Absyn.ESlt _eslt = (grammar.Absyn.ESlt) foo;
+       render("(");
+       render("ESlt");
+       sh(_eslt.reg_1);
+       sh(_eslt.reg_2);
+       sh(_eslt.reg_3);
+       render(")");
+    }
+    if (foo instanceof grammar.Absyn.EJr)
+    {
+       grammar.Absyn.EJr _ejr = (grammar.Absyn.EJr) foo;
+       render("(");
+       render("EJr");
+       sh(_ejr.reg_);
        render(")");
     }
   }
 
-  private static void sh(grammar.Absyn.ROper foo)
+  private static void sh(grammar.Absyn.IInstr foo)
   {
-    if (foo instanceof grammar.Absyn.ROper_add)
+    if (foo instanceof grammar.Absyn.EAddi)
     {
-       grammar.Absyn.ROper_add _roper_add = (grammar.Absyn.ROper_add) foo;
-       render("ROper_add");
+       grammar.Absyn.EAddi _eaddi = (grammar.Absyn.EAddi) foo;
+       render("(");
+       render("EAddi");
+       sh(_eaddi.reg_1);
+       sh(_eaddi.reg_2);
+       sh(_eaddi.imm_);
+       render(")");
     }
-    if (foo instanceof grammar.Absyn.ROper_sub)
+    if (foo instanceof grammar.Absyn.EOri)
     {
-       grammar.Absyn.ROper_sub _roper_sub = (grammar.Absyn.ROper_sub) foo;
-       render("ROper_sub");
+       grammar.Absyn.EOri _eori = (grammar.Absyn.EOri) foo;
+       render("(");
+       render("EOri");
+       sh(_eori.reg_1);
+       sh(_eori.reg_2);
+       sh(_eori.imm_);
+       render(")");
     }
-    if (foo instanceof grammar.Absyn.ROper_and)
+    if (foo instanceof grammar.Absyn.EAndi)
     {
-       grammar.Absyn.ROper_and _roper_and = (grammar.Absyn.ROper_and) foo;
-       render("ROper_and");
+       grammar.Absyn.EAndi _eandi = (grammar.Absyn.EAndi) foo;
+       render("(");
+       render("EAndi");
+       sh(_eandi.reg_1);
+       sh(_eandi.reg_2);
+       sh(_eandi.imm_);
+       render(")");
     }
-    if (foo instanceof grammar.Absyn.ROper_or)
+    if (foo instanceof grammar.Absyn.ESlti)
     {
-       grammar.Absyn.ROper_or _roper_or = (grammar.Absyn.ROper_or) foo;
-       render("ROper_or");
+       grammar.Absyn.ESlti _eslti = (grammar.Absyn.ESlti) foo;
+       render("(");
+       render("ESlti");
+       sh(_eslti.reg_1);
+       sh(_eslti.reg_2);
+       sh(_eslti.imm_);
+       render(")");
     }
-    if (foo instanceof grammar.Absyn.ROper_sll)
+    if (foo instanceof grammar.Absyn.EBne)
     {
-       grammar.Absyn.ROper_sll _roper_sll = (grammar.Absyn.ROper_sll) foo;
-       render("ROper_sll");
+       grammar.Absyn.EBne _ebne = (grammar.Absyn.EBne) foo;
+       render("(");
+       render("EBne");
+       sh(_ebne.reg_1);
+       sh(_ebne.reg_2);
+       sh(_ebne.addr_);
+       render(")");
     }
-    if (foo instanceof grammar.Absyn.ROper_slt)
+    if (foo instanceof grammar.Absyn.EBeq)
     {
-       grammar.Absyn.ROper_slt _roper_slt = (grammar.Absyn.ROper_slt) foo;
-       render("ROper_slt");
+       grammar.Absyn.EBeq _ebeq = (grammar.Absyn.EBeq) foo;
+       render("(");
+       render("EBeq");
+       sh(_ebeq.reg_1);
+       sh(_ebeq.reg_2);
+       sh(_ebeq.addr_);
+       render(")");
     }
-    if (foo instanceof grammar.Absyn.ROper_jr)
+    if (foo instanceof grammar.Absyn.ELui)
     {
-       grammar.Absyn.ROper_jr _roper_jr = (grammar.Absyn.ROper_jr) foo;
-       render("ROper_jr");
+       grammar.Absyn.ELui _elui = (grammar.Absyn.ELui) foo;
+       render("(");
+       render("ELui");
+       sh(_elui.reg_);
+       sh(_elui.imm_);
+       render(")");
     }
-    if (foo instanceof grammar.Absyn.ROper_syscall)
+    if (foo instanceof grammar.Absyn.ESw)
     {
-       grammar.Absyn.ROper_syscall _roper_syscall = (grammar.Absyn.ROper_syscall) foo;
-       render("ROper_syscall");
+       grammar.Absyn.ESw _esw = (grammar.Absyn.ESw) foo;
+       render("(");
+       render("ESw");
+       sh(_esw.reg_);
+       sh(_esw.addr_);
+       render(")");
+    }
+    if (foo instanceof grammar.Absyn.ELw)
+    {
+       grammar.Absyn.ELw _elw = (grammar.Absyn.ELw) foo;
+       render("(");
+       render("ELw");
+       sh(_elw.reg_);
+       sh(_elw.addr_);
+       render(")");
     }
   }
 
-  private static void sh(grammar.Absyn.IOper foo)
+  private static void sh(grammar.Absyn.JInstr foo)
   {
-    if (foo instanceof grammar.Absyn.IOper_addi)
-    {
-       grammar.Absyn.IOper_addi _ioper_addi = (grammar.Absyn.IOper_addi) foo;
-       render("IOper_addi");
-    }
-    if (foo instanceof grammar.Absyn.IOper_ori)
-    {
-       grammar.Absyn.IOper_ori _ioper_ori = (grammar.Absyn.IOper_ori) foo;
-       render("IOper_ori");
-    }
-    if (foo instanceof grammar.Absyn.IOper_andi)
-    {
-       grammar.Absyn.IOper_andi _ioper_andi = (grammar.Absyn.IOper_andi) foo;
-       render("IOper_andi");
-    }
-    if (foo instanceof grammar.Absyn.IOper_slti)
-    {
-       grammar.Absyn.IOper_slti _ioper_slti = (grammar.Absyn.IOper_slti) foo;
-       render("IOper_slti");
-    }
-    if (foo instanceof grammar.Absyn.IOper_lui)
-    {
-       grammar.Absyn.IOper_lui _ioper_lui = (grammar.Absyn.IOper_lui) foo;
-       render("IOper_lui");
-    }
-    if (foo instanceof grammar.Absyn.IOper_beq)
-    {
-       grammar.Absyn.IOper_beq _ioper_beq = (grammar.Absyn.IOper_beq) foo;
-       render("IOper_beq");
-    }
-    if (foo instanceof grammar.Absyn.IOper_bne)
-    {
-       grammar.Absyn.IOper_bne _ioper_bne = (grammar.Absyn.IOper_bne) foo;
-       render("IOper_bne");
-    }
-  }
-
-  private static void sh(grammar.Absyn.JOper foo)
-  {
-    if (foo instanceof grammar.Absyn.JOper_j)
-    {
-       grammar.Absyn.JOper_j _joper_j = (grammar.Absyn.JOper_j) foo;
-       render("JOper_j");
-    }
-  }
-
-  private static void sh(grammar.Absyn.Type foo)
-  {
-    if (foo instanceof grammar.Absyn.ER0)
-    {
-       grammar.Absyn.ER0 _er0 = (grammar.Absyn.ER0) foo;
-       render("(");
-       render("ER0");
-       sh(_er0.roper_);
-       render(")");
-    }
-    if (foo instanceof grammar.Absyn.ER1)
-    {
-       grammar.Absyn.ER1 _er1 = (grammar.Absyn.ER1) foo;
-       render("(");
-       render("ER1");
-       sh(_er1.roper_);
-       sh(_er1.reg_);
-       render(")");
-    }
-    if (foo instanceof grammar.Absyn.ER2)
-    {
-       grammar.Absyn.ER2 _er2 = (grammar.Absyn.ER2) foo;
-       render("(");
-       render("ER2");
-       sh(_er2.roper_);
-       sh(_er2.reg_1);
-       sh(_er2.reg_2);
-       render(")");
-    }
-    if (foo instanceof grammar.Absyn.ER3)
-    {
-       grammar.Absyn.ER3 _er3 = (grammar.Absyn.ER3) foo;
-       render("(");
-       render("ER3");
-       sh(_er3.roper_);
-       sh(_er3.reg_1);
-       sh(_er3.reg_2);
-       sh(_er3.reg_3);
-       render(")");
-    }
-    if (foo instanceof grammar.Absyn.EI)
-    {
-       grammar.Absyn.EI _ei = (grammar.Absyn.EI) foo;
-       render("(");
-       render("EI");
-       sh(_ei.ioper_);
-       sh(_ei.reg_1);
-       sh(_ei.reg_2);
-       sh(_ei.imm_);
-       render(")");
-    }
     if (foo instanceof grammar.Absyn.EJ)
     {
        grammar.Absyn.EJ _ej = (grammar.Absyn.EJ) foo;
        render("(");
        render("EJ");
-       sh(_ej.joper_);
-       sh(_ej.imm_);
+       sh(_ej.addr_);
        render(")");
     }
   }
 
-  private static void sh(grammar.Absyn.LblLine foo)
+  private static void sh(grammar.Absyn.Instr foo)
   {
-    if (foo instanceof grammar.Absyn.LbledLine)
+    if (foo instanceof grammar.Absyn.ESyscall)
     {
-       grammar.Absyn.LbledLine _lbledline = (grammar.Absyn.LbledLine) foo;
+       grammar.Absyn.ESyscall _esyscall = (grammar.Absyn.ESyscall) foo;
+       render("ESyscall");
+    }
+    if (foo instanceof grammar.Absyn.ERInstr)
+    {
+       grammar.Absyn.ERInstr _erinstr = (grammar.Absyn.ERInstr) foo;
        render("(");
-       render("LbledLine");
-       sh(_lbledline.label_);
-       sh(_lbledline.type_);
+       render("ERInstr");
+       sh(_erinstr.rinstr_);
        render(")");
     }
-    if (foo instanceof grammar.Absyn.LbledLine2)
+    if (foo instanceof grammar.Absyn.EIInstr)
     {
-       grammar.Absyn.LbledLine2 _lbledline2 = (grammar.Absyn.LbledLine2) foo;
+       grammar.Absyn.EIInstr _eiinstr = (grammar.Absyn.EIInstr) foo;
        render("(");
-       render("LbledLine2");
-       sh(_lbledline2.label_);
+       render("EIInstr");
+       sh(_eiinstr.iinstr_);
+       render(")");
+    }
+    if (foo instanceof grammar.Absyn.EJInstr)
+    {
+       grammar.Absyn.EJInstr _ejinstr = (grammar.Absyn.EJInstr) foo;
+       render("(");
+       render("EJInstr");
+       sh(_ejinstr.jinstr_);
        render(")");
     }
   }

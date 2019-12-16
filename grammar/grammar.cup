@@ -2,10 +2,10 @@
 package grammar;
 
 parser code {:
-  public grammar.Absyn.Stmt pStmt() throws Exception
+  public grammar.Absyn.Program pProgram() throws Exception
   {
 	java_cup.runtime.Symbol res = parse();
-	return (grammar.Absyn.Stmt) res.value;
+	return (grammar.Absyn.Program) res.value;
   }
 
 public <B,A extends java.util.LinkedList<? super B>> A cons_(B x, A xs) { xs.addFirst(x); return xs; }
@@ -22,104 +22,101 @@ public void unrecovered_syntax_error(java_cup.runtime.Symbol cur_token) throws j
 
 :}
 
+nonterminal grammar.Absyn.Program Program;
+nonterminal grammar.Absyn.ListStmt ListStmt;
 nonterminal grammar.Absyn.Stmt Stmt;
 nonterminal grammar.Absyn.Label Label;
+nonterminal grammar.Absyn.Offset Offset;
+nonterminal grammar.Absyn.LblInstr LblInstr;
 nonterminal grammar.Absyn.Imm Imm;
-nonterminal grammar.Absyn.Reg Reg;
-nonterminal grammar.Absyn.ROper ROper;
-nonterminal grammar.Absyn.IOper IOper;
-nonterminal grammar.Absyn.JOper JOper;
-nonterminal grammar.Absyn.Type Type0;
-nonterminal grammar.Absyn.Type Type1;
-nonterminal grammar.Absyn.Type Type2;
-nonterminal grammar.Absyn.Type Type3;
-nonterminal grammar.Absyn.Type Type4;
-nonterminal grammar.Absyn.Type Type5;
-nonterminal grammar.Absyn.Type Type;
-nonterminal grammar.Absyn.LblLine LblLine;
+nonterminal grammar.Absyn.Addr Addr;
+nonterminal grammar.Absyn.RInstr RInstr;
+nonterminal grammar.Absyn.IInstr IInstr;
+nonterminal grammar.Absyn.JInstr JInstr;
+nonterminal grammar.Absyn.Instr Instr;
 
 terminal _SYMB_0;    //   :
-terminal _SYMB_1;    //   $
-terminal _SYMB_2;    //   ,
-terminal _SYMB_3;    //   (
-terminal _SYMB_4;    //   )
-terminal _SYMB_5;    //   add
-terminal _SYMB_6;    //   addi
-terminal _SYMB_7;    //   and
-terminal _SYMB_8;    //   andi
-terminal _SYMB_9;    //   beq
-terminal _SYMB_10;    //   bne
-terminal _SYMB_11;    //   j
-terminal _SYMB_12;    //   jr
-terminal _SYMB_13;    //   lui
+terminal _SYMB_1;    //   (
+terminal _SYMB_2;    //   )
+terminal _SYMB_3;    //   ,
+terminal _SYMB_4;    //   add
+terminal _SYMB_5;    //   addi
+terminal _SYMB_6;    //   and
+terminal _SYMB_7;    //   andi
+terminal _SYMB_8;    //   beq
+terminal _SYMB_9;    //   bne
+terminal _SYMB_10;    //   j
+terminal _SYMB_11;    //   jr
+terminal _SYMB_12;    //   lui
+terminal _SYMB_13;    //   lw
 terminal _SYMB_14;    //   or
 terminal _SYMB_15;    //   ori
 terminal _SYMB_16;    //   sll
 terminal _SYMB_17;    //   slt
 terminal _SYMB_18;    //   slti
-terminal _SYMB_19;    //   sub
-terminal _SYMB_20;    //   syscall
+terminal _SYMB_19;    //   srl
+terminal _SYMB_20;    //   sub
+terminal _SYMB_21;    //   sw
+terminal _SYMB_22;    //   syscall
 
-terminal String _STRING_;
-terminal Character _CHAR_;
+
+
 terminal Integer _INTEGER_;
 
 
 
+terminal String Reg;
+terminal String LineLabel;
 
 
-start with Stmt;
+start with Program;
 
 
-Stmt ::= LblLine:p_1  {: RESULT = new grammar.Absyn.StmtLblLine(p_1); :} 
-  | Type:p_1  {: RESULT = new grammar.Absyn.StmtType(p_1); :}
+Program ::= ListStmt:p_1  {: RESULT = new grammar.Absyn.PDefs(p_1); :} 
 ;
-Label ::= _STRING_:p_1 _SYMB_0  {: RESULT = new grammar.Absyn.Lbl1(p_1); :} 
+ListStmt ::=  /* empty */  {: RESULT = new grammar.Absyn.ListStmt(); :} 
+  | ListStmt:p_1 Stmt:p_2  {: RESULT = p_1; p_1.addLast(p_2); :}
+;
+Stmt ::= LblInstr:p_1  {: RESULT = new grammar.Absyn.EStmtLbl(p_1); :} 
+  | Instr:p_1  {: RESULT = new grammar.Absyn.EStmtInstr(p_1); :}
+;
+Label ::= LineLabel:p_1 _SYMB_0  {: RESULT = new grammar.Absyn.ELbl(p_1); :} 
+;
+Offset ::= _INTEGER_:p_1 _SYMB_1 Reg:p_3 _SYMB_2  {: RESULT = new grammar.Absyn.OffRel(p_1,p_3); :} 
+  | Label:p_1  {: RESULT = new grammar.Absyn.OffLbl(p_1); :}
+;
+LblInstr ::= Label:p_1 Instr:p_2  {: RESULT = new grammar.Absyn.LbledStmt(p_1,p_2); :} 
+  | Label:p_1  {: RESULT = new grammar.Absyn.LbledLine(p_1); :}
 ;
 Imm ::= _INTEGER_:p_1  {: RESULT = new grammar.Absyn.Immi(p_1); :} 
-  | Label:p_1  {: RESULT = new grammar.Absyn.Imml(p_1); :}
 ;
-Reg ::= _SYMB_1 _CHAR_:p_2 _INTEGER_:p_3  {: RESULT = new grammar.Absyn.Rg(p_2,p_3); :} 
+Addr ::= Imm:p_1  {: RESULT = new grammar.Absyn.AddAbs(p_1); :} 
+  | Offset:p_1  {: RESULT = new grammar.Absyn.AddRel(p_1); :}
 ;
-ROper ::= _SYMB_5  {: RESULT = new grammar.Absyn.ROper_add(); :} 
-  | _SYMB_19  {: RESULT = new grammar.Absyn.ROper_sub(); :}
-  | _SYMB_7  {: RESULT = new grammar.Absyn.ROper_and(); :}
-  | _SYMB_14  {: RESULT = new grammar.Absyn.ROper_or(); :}
-  | _SYMB_16  {: RESULT = new grammar.Absyn.ROper_sll(); :}
-  | _SYMB_17  {: RESULT = new grammar.Absyn.ROper_slt(); :}
-  | _SYMB_12  {: RESULT = new grammar.Absyn.ROper_jr(); :}
-  | _SYMB_20  {: RESULT = new grammar.Absyn.ROper_syscall(); :}
+RInstr ::= _SYMB_4 Reg:p_2 _SYMB_3 Reg:p_4 _SYMB_3 Reg:p_6  {: RESULT = new grammar.Absyn.EAdd(p_2,p_4,p_6); :} 
+  | _SYMB_20 Reg:p_2 _SYMB_3 Reg:p_4 _SYMB_3 Reg:p_6  {: RESULT = new grammar.Absyn.ESub(p_2,p_4,p_6); :}
+  | _SYMB_6 Reg:p_2 _SYMB_3 Reg:p_4 _SYMB_3 Reg:p_6  {: RESULT = new grammar.Absyn.EAnd(p_2,p_4,p_6); :}
+  | _SYMB_14 Reg:p_2 _SYMB_3 Reg:p_4 _SYMB_3 Reg:p_6  {: RESULT = new grammar.Absyn.EOr(p_2,p_4,p_6); :}
+  | _SYMB_16 Reg:p_2 _SYMB_3 Reg:p_4 _SYMB_3 Imm:p_6  {: RESULT = new grammar.Absyn.ESll(p_2,p_4,p_6); :}
+  | _SYMB_19 Reg:p_2 _SYMB_3 Reg:p_4 _SYMB_3 Imm:p_6  {: RESULT = new grammar.Absyn.ESrl(p_2,p_4,p_6); :}
+  | _SYMB_17 Reg:p_2 _SYMB_3 Reg:p_4 _SYMB_3 Reg:p_6  {: RESULT = new grammar.Absyn.ESlt(p_2,p_4,p_6); :}
+  | _SYMB_11 Reg:p_2  {: RESULT = new grammar.Absyn.EJr(p_2); :}
 ;
-IOper ::= _SYMB_6  {: RESULT = new grammar.Absyn.IOper_addi(); :} 
-  | _SYMB_15  {: RESULT = new grammar.Absyn.IOper_ori(); :}
-  | _SYMB_8  {: RESULT = new grammar.Absyn.IOper_andi(); :}
-  | _SYMB_18  {: RESULT = new grammar.Absyn.IOper_slti(); :}
-  | _SYMB_13  {: RESULT = new grammar.Absyn.IOper_lui(); :}
-  | _SYMB_9  {: RESULT = new grammar.Absyn.IOper_beq(); :}
-  | _SYMB_10  {: RESULT = new grammar.Absyn.IOper_bne(); :}
+IInstr ::= _SYMB_5 Reg:p_2 _SYMB_3 Reg:p_4 _SYMB_3 Imm:p_6  {: RESULT = new grammar.Absyn.EAddi(p_2,p_4,p_6); :} 
+  | _SYMB_15 Reg:p_2 _SYMB_3 Reg:p_4 _SYMB_3 Imm:p_6  {: RESULT = new grammar.Absyn.EOri(p_2,p_4,p_6); :}
+  | _SYMB_7 Reg:p_2 _SYMB_3 Reg:p_4 _SYMB_3 Imm:p_6  {: RESULT = new grammar.Absyn.EAndi(p_2,p_4,p_6); :}
+  | _SYMB_18 Reg:p_2 _SYMB_3 Reg:p_4 _SYMB_3 Imm:p_6  {: RESULT = new grammar.Absyn.ESlti(p_2,p_4,p_6); :}
+  | _SYMB_9 Reg:p_2 _SYMB_3 Reg:p_4 _SYMB_3 Addr:p_6  {: RESULT = new grammar.Absyn.EBne(p_2,p_4,p_6); :}
+  | _SYMB_8 Reg:p_2 _SYMB_3 Reg:p_4 _SYMB_3 Addr:p_6  {: RESULT = new grammar.Absyn.EBeq(p_2,p_4,p_6); :}
+  | _SYMB_12 Reg:p_2 _SYMB_3 Imm:p_4  {: RESULT = new grammar.Absyn.ELui(p_2,p_4); :}
+  | _SYMB_21 Reg:p_2 _SYMB_3 Addr:p_4  {: RESULT = new grammar.Absyn.ESw(p_2,p_4); :}
+  | _SYMB_13 Reg:p_2 _SYMB_3 Addr:p_4  {: RESULT = new grammar.Absyn.ELw(p_2,p_4); :}
 ;
-JOper ::= _SYMB_11  {: RESULT = new grammar.Absyn.JOper_j(); :} 
+JInstr ::= _SYMB_10 Addr:p_2  {: RESULT = new grammar.Absyn.EJ(p_2); :} 
 ;
-Type0 ::= ROper:p_1  {: RESULT = new grammar.Absyn.ER0(p_1); :} 
-;
-Type1 ::= ROper:p_1 Reg:p_2  {: RESULT = new grammar.Absyn.ER1(p_1,p_2); :} 
-  | Type2:p_1  {: RESULT = p_1; :}
-;
-Type2 ::= ROper:p_1 Reg:p_2 _SYMB_2 Reg:p_4  {: RESULT = new grammar.Absyn.ER2(p_1,p_2,p_4); :} 
-  | Type3:p_1  {: RESULT = p_1; :}
-;
-Type3 ::= ROper:p_1 Reg:p_2 _SYMB_2 Reg:p_4 _SYMB_2 Reg:p_6  {: RESULT = new grammar.Absyn.ER3(p_1,p_2,p_4,p_6); :} 
-  | Type4:p_1  {: RESULT = p_1; :}
-;
-Type4 ::= IOper:p_1 Reg:p_2 _SYMB_2 Reg:p_4 _SYMB_2 Imm:p_6  {: RESULT = new grammar.Absyn.EI(p_1,p_2,p_4,p_6); :} 
-  | Type5:p_1  {: RESULT = p_1; :}
-;
-Type5 ::= JOper:p_1 Imm:p_2  {: RESULT = new grammar.Absyn.EJ(p_1,p_2); :} 
-  | _SYMB_3 Type:p_2 _SYMB_4  {: RESULT = p_2; :}
-;
-Type ::= Type1:p_1  {: RESULT = p_1; :} 
-;
-LblLine ::= Label:p_1 Type5:p_2  {: RESULT = new grammar.Absyn.LbledLine(p_1,p_2); :} 
-  | Label:p_1  {: RESULT = new grammar.Absyn.LbledLine2(p_1); :}
+Instr ::= _SYMB_22  {: RESULT = new grammar.Absyn.ESyscall(); :} 
+  | RInstr:p_1  {: RESULT = new grammar.Absyn.ERInstr(p_1); :}
+  | IInstr:p_1  {: RESULT = new grammar.Absyn.EIInstr(p_1); :}
+  | JInstr:p_1  {: RESULT = new grammar.Absyn.EJInstr(p_1); :}
 ;
 

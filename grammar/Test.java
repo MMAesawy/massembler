@@ -26,7 +26,7 @@ public class Test
     /*  */
     try
     {
-      grammar.Absyn.Stmt parse_tree = p.pStmt();
+      grammar.Absyn.Program parse_tree = p.pProgram();
       System.out.println();
       System.out.println("Parse Succesful!");
       System.out.println();

@@ -2,76 +2,81 @@ package grammar;
 import grammar.Absyn.*;
 /** BNFC-Generated Abstract Visitor */
 public class AbstractVisitor<R,A> implements AllVisitor<R,A> {
+/* Program */
+    public R visit(grammar.Absyn.PDefs p, A arg) { return visitDefault(p, arg); }
+    public R visitDefault(grammar.Absyn.Program p, A arg) {
+      throw new IllegalArgumentException(this.getClass().getName() + ": " + p);
+    }
 /* Stmt */
-    public R visit(grammar.Absyn.StmtLblLine p, A arg) { return visitDefault(p, arg); }
-    public R visit(grammar.Absyn.StmtType p, A arg) { return visitDefault(p, arg); }
+    public R visit(grammar.Absyn.EStmtLbl p, A arg) { return visitDefault(p, arg); }
+    public R visit(grammar.Absyn.EStmtInstr p, A arg) { return visitDefault(p, arg); }
     public R visitDefault(grammar.Absyn.Stmt p, A arg) {
       throw new IllegalArgumentException(this.getClass().getName() + ": " + p);
     }
 /* Label */
-    public R visit(grammar.Absyn.Lbl1 p, A arg) { return visitDefault(p, arg); }
+    public R visit(grammar.Absyn.ELbl p, A arg) { return visitDefault(p, arg); }
     public R visitDefault(grammar.Absyn.Label p, A arg) {
+      throw new IllegalArgumentException(this.getClass().getName() + ": " + p);
+    }
+/* Offset */
+    public R visit(grammar.Absyn.OffRel p, A arg) { return visitDefault(p, arg); }
+    public R visit(grammar.Absyn.OffLbl p, A arg) { return visitDefault(p, arg); }
+    public R visitDefault(grammar.Absyn.Offset p, A arg) {
+      throw new IllegalArgumentException(this.getClass().getName() + ": " + p);
+    }
+/* LblInstr */
+    public R visit(grammar.Absyn.LbledStmt p, A arg) { return visitDefault(p, arg); }
+    public R visit(grammar.Absyn.LbledLine p, A arg) { return visitDefault(p, arg); }
+    public R visitDefault(grammar.Absyn.LblInstr p, A arg) {
       throw new IllegalArgumentException(this.getClass().getName() + ": " + p);
     }
 /* Imm */
     public R visit(grammar.Absyn.Immi p, A arg) { return visitDefault(p, arg); }
-    public R visit(grammar.Absyn.Imml p, A arg) { return visitDefault(p, arg); }
     public R visitDefault(grammar.Absyn.Imm p, A arg) {
       throw new IllegalArgumentException(this.getClass().getName() + ": " + p);
     }
-/* Reg */
-    public R visit(grammar.Absyn.Rg p, A arg) { return visitDefault(p, arg); }
-    public R visitDefault(grammar.Absyn.Reg p, A arg) {
+/* Addr */
+    public R visit(grammar.Absyn.AddAbs p, A arg) { return visitDefault(p, arg); }
+    public R visit(grammar.Absyn.AddRel p, A arg) { return visitDefault(p, arg); }
+    public R visitDefault(grammar.Absyn.Addr p, A arg) {
       throw new IllegalArgumentException(this.getClass().getName() + ": " + p);
     }
-/* ROper */
-    public R visit(grammar.Absyn.ROper_add p, A arg) { return visitDefault(p, arg); }
-    public R visit(grammar.Absyn.ROper_sub p, A arg) { return visitDefault(p, arg); }
-    public R visit(grammar.Absyn.ROper_and p, A arg) { return visitDefault(p, arg); }
-    public R visit(grammar.Absyn.ROper_or p, A arg) { return visitDefault(p, arg); }
-    public R visit(grammar.Absyn.ROper_sll p, A arg) { return visitDefault(p, arg); }
-    public R visit(grammar.Absyn.ROper_slt p, A arg) { return visitDefault(p, arg); }
-    public R visit(grammar.Absyn.ROper_jr p, A arg) { return visitDefault(p, arg); }
-    public R visit(grammar.Absyn.ROper_syscall p, A arg) { return visitDefault(p, arg); }
-    public R visitDefault(grammar.Absyn.ROper p, A arg) {
+/* RInstr */
+    public R visit(grammar.Absyn.EAdd p, A arg) { return visitDefault(p, arg); }
+    public R visit(grammar.Absyn.ESub p, A arg) { return visitDefault(p, arg); }
+    public R visit(grammar.Absyn.EAnd p, A arg) { return visitDefault(p, arg); }
+    public R visit(grammar.Absyn.EOr p, A arg) { return visitDefault(p, arg); }
+    public R visit(grammar.Absyn.ESll p, A arg) { return visitDefault(p, arg); }
+    public R visit(grammar.Absyn.ESrl p, A arg) { return visitDefault(p, arg); }
+    public R visit(grammar.Absyn.ESlt p, A arg) { return visitDefault(p, arg); }
+    public R visit(grammar.Absyn.EJr p, A arg) { return visitDefault(p, arg); }
+    public R visitDefault(grammar.Absyn.RInstr p, A arg) {
       throw new IllegalArgumentException(this.getClass().getName() + ": " + p);
     }
-/* IOper */
-    public R visit(grammar.Absyn.IOper_addi p, A arg) { return visitDefault(p, arg); }
-    public R visit(grammar.Absyn.IOper_ori p, A arg) { return visitDefault(p, arg); }
-    public R visit(grammar.Absyn.IOper_andi p, A arg) { return visitDefault(p, arg); }
-    public R visit(grammar.Absyn.IOper_slti p, A arg) { return visitDefault(p, arg); }
-    public R visit(grammar.Absyn.IOper_lui p, A arg) { return visitDefault(p, arg); }
-    public R visit(grammar.Absyn.IOper_beq p, A arg) { return visitDefault(p, arg); }
-    public R visit(grammar.Absyn.IOper_bne p, A arg) { return visitDefault(p, arg); }
-    public R visitDefault(grammar.Absyn.IOper p, A arg) {
+/* IInstr */
+    public R visit(grammar.Absyn.EAddi p, A arg) { return visitDefault(p, arg); }
+    public R visit(grammar.Absyn.EOri p, A arg) { return visitDefault(p, arg); }
+    public R visit(grammar.Absyn.EAndi p, A arg) { return visitDefault(p, arg); }
+    public R visit(grammar.Absyn.ESlti p, A arg) { return visitDefault(p, arg); }
+    public R visit(grammar.Absyn.EBne p, A arg) { return visitDefault(p, arg); }
+    public R visit(grammar.Absyn.EBeq p, A arg) { return visitDefault(p, arg); }
+    public R visit(grammar.Absyn.ELui p, A arg) { return visitDefault(p, arg); }
+    public R visit(grammar.Absyn.ESw p, A arg) { return visitDefault(p, arg); }
+    public R visit(grammar.Absyn.ELw p, A arg) { return visitDefault(p, arg); }
+    public R visitDefault(grammar.Absyn.IInstr p, A arg) {
       throw new IllegalArgumentException(this.getClass().getName() + ": " + p);
     }
-/* JOper */
-    public R visit(grammar.Absyn.JOper_j p, A arg) { return visitDefault(p, arg); }
-    public R visitDefault(grammar.Absyn.JOper p, A arg) {
-      throw new IllegalArgumentException(this.getClass().getName() + ": " + p);
-    }
-/* Type */
-    public R visit(grammar.Absyn.ER0 p, A arg) { return visitDefault(p, arg); }
-    public R visit(grammar.Absyn.ER1 p, A arg) { return visitDefault(p, arg); }
-
-    public R visit(grammar.Absyn.ER2 p, A arg) { return visitDefault(p, arg); }
-
-    public R visit(grammar.Absyn.ER3 p, A arg) { return visitDefault(p, arg); }
-
-    public R visit(grammar.Absyn.EI p, A arg) { return visitDefault(p, arg); }
-
+/* JInstr */
     public R visit(grammar.Absyn.EJ p, A arg) { return visitDefault(p, arg); }
-
-
-    public R visitDefault(grammar.Absyn.Type p, A arg) {
+    public R visitDefault(grammar.Absyn.JInstr p, A arg) {
       throw new IllegalArgumentException(this.getClass().getName() + ": " + p);
     }
-/* LblLine */
-    public R visit(grammar.Absyn.LbledLine p, A arg) { return visitDefault(p, arg); }
-    public R visit(grammar.Absyn.LbledLine2 p, A arg) { return visitDefault(p, arg); }
-    public R visitDefault(grammar.Absyn.LblLine p, A arg) {
+/* Instr */
+    public R visit(grammar.Absyn.ESyscall p, A arg) { return visitDefault(p, arg); }
+    public R visit(grammar.Absyn.ERInstr p, A arg) { return visitDefault(p, arg); }
+    public R visit(grammar.Absyn.EIInstr p, A arg) { return visitDefault(p, arg); }
+    public R visit(grammar.Absyn.EJInstr p, A arg) { return visitDefault(p, arg); }
+    public R visitDefault(grammar.Absyn.Instr p, A arg) {
       throw new IllegalArgumentException(this.getClass().getName() + ": " + p);
     }
 

@@ -1,0 +1,53 @@
+comment "//" ;
+comment "/*" "*/" ;
+
+entrypoints Program ;
+
+PDefs. Program ::= [Stmt] ;
+terminator Stmt "" ;
+
+EStmtLbl. Stmt ::= LblInstr ;
+EStmtInstr. Stmt ::= Instr ;
+
+token Reg ('$' ( (["tvsak"]? digit) | (["gsfr"] ["pa"]))) ;
+token LineLabel (letter (digit | letter | '_')* ) ;
+ELbl. Label ::= LineLabel ":" ;
+OffRel. Offset ::= Integer "(" Reg ")" ;
+OffLbl. Offset ::= Label ;
+
+LbledStmt. LblInstr ::= Label Instr ;
+LbledLine. LblInstr ::= Label ;
+
+Immi. Imm ::= Integer ;
+AddAbs. Addr ::= Imm ;
+AddRel. Addr ::= Offset ;
+
+EAdd. RInstr ::= "add" Reg "," Reg "," Reg ;
+ESub. RInstr ::= "sub" Reg "," Reg "," Reg ;
+EAnd. RInstr ::= "and" Reg "," Reg "," Reg ;
+EOr. RInstr ::= "or" Reg "," Reg "," Reg ;
+ESll. RInstr ::= "sll" Reg "," Reg "," Imm ;
+ESrl. RInstr ::= "srl" Reg "," Reg "," Imm ;
+ESlt. RInstr ::= "slt" Reg "," Reg "," Reg ;
+EJr. RInstr ::= "jr" Reg ;
+
+EAddi. IInstr ::= "addi" Reg "," Reg "," Imm ;
+EOri. IInstr ::= "ori" Reg "," Reg "," Imm ;
+EAndi. IInstr ::= "andi" Reg "," Reg "," Imm ;
+ESlti. IInstr ::= "slti" Reg "," Reg "," Imm ;
+EBne. IInstr ::= "bne" Reg "," Reg "," Addr ;
+EBeq. IInstr ::= "beq" Reg "," Reg "," Addr ;
+ELui. IInstr ::= "lui" Reg "," Imm ;
+ESw. IInstr ::= "sw" Reg "," Addr ;
+ELw. IInstr ::= "lw" Reg "," Addr ;
+
+EJ. JInstr ::= "j" Addr ;
+
+ESyscall. Instr ::= "syscall" ;
+ERInstr. Instr ::= RInstr ;
+EIInstr. Instr ::= IInstr ;
+EJInstr. Instr ::= JInstr ;
+
+
+
+
