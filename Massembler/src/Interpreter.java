@@ -37,6 +37,14 @@ public class Interpreter
         this(ass, in, null, null);
     }
 
+    public Interpreter(Massembler ass, String in) throws IOException{
+        this(ass, in, null, null);
+    }
+
+    public Interpreter(Massembler ass, String in, PrintStream output, PrintStream error) throws IOException{
+        this(ass, new InputStreamReader(new ByteArrayInputStream(in.getBytes())), output, error);
+    }
+
     public Interpreter(Massembler ass, InputStreamReader in, PrintStream output, PrintStream error) throws IOException {
         assembler = ass;
         preprocessor = new Preprocessor();
