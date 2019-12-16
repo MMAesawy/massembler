@@ -1,20 +1,15 @@
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 public class Memory {
 
-    ArrayList<Integer> memory = new ArrayList<>();
+    HashMap<Integer, Integer> memory = new HashMap<>();
 
     public int get(int address) {
-
-        memory.ensureCapacity(address+1);
-        return memory.get(address);
+        return memory.getOrDefault(address, 0);
     }
 
     public void set(int address, int value) {
-
-        memory.ensureCapacity(address+1);
-        memory.set(address, value);
+        memory.put(address, value);
     }
 }
