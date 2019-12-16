@@ -121,6 +121,7 @@ public class Preprocessor
             if (!registerRegex.matcher(p.reg_).matches()) validRegister = false;
             if (!validRegister){
                 // throw invalid register error
+                throw new InvalidRegisterException(pcToFc.get(gProgramCounter), p.reg_);
             }
             return null;
         }
@@ -179,8 +180,8 @@ public class Preprocessor
             if (!registerRegex.matcher(p.reg_3).matches()) validRegister = false;
             if (!validRegister){
                 // throw invalid register error
+                throw new InvalidRegisterException(pcToFc.get(gProgramCounter), p.reg_1, p.reg_2, p.reg_3);
             }
-            instructionTypes.set(gProgramCounter, 'R');
             return null;
         }    public String visit(grammar.Absyn.ESub p, Object arg)
     { /* Code For ESub Goes Here */
@@ -193,8 +194,8 @@ public class Preprocessor
         if (!registerRegex.matcher(p.reg_3).matches()) validRegister = false;
         if (!validRegister){
             // throw invalid register error
+            throw new InvalidRegisterException(pcToFc.get(gProgramCounter), p.reg_1, p.reg_2, p.reg_3);
         }
-        instructionTypes.set(gProgramCounter, 'R');
         return null;
     }    public String visit(grammar.Absyn.EAnd p, Object arg)
     { /* Code For EAnd Goes Here */
@@ -207,8 +208,8 @@ public class Preprocessor
         if (!registerRegex.matcher(p.reg_3).matches()) validRegister = false;
         if (!validRegister){
             // throw invalid register error
+            throw new InvalidRegisterException(pcToFc.get(gProgramCounter), p.reg_1, p.reg_2, p.reg_3);
         }
-        instructionTypes.set(gProgramCounter, 'R');
         return null;
     }    public String visit(grammar.Absyn.EOr p, Object arg)
     { /* Code For EOr Goes Here */
@@ -221,8 +222,8 @@ public class Preprocessor
         if (!registerRegex.matcher(p.reg_3).matches()) validRegister = false;
         if (!validRegister){
             // throw invalid register error
+            throw new InvalidRegisterException(pcToFc.get(gProgramCounter), p.reg_1, p.reg_2, p.reg_3);
         }
-        instructionTypes.set(gProgramCounter, 'R');
         return null;
     }    public String visit(grammar.Absyn.ESll p, Object arg)
     { /* Code For ESll Goes Here */
@@ -233,8 +234,8 @@ public class Preprocessor
         if (!registerRegex.matcher(p.reg_2).matches()) validRegister = false;
         if (!validRegister){
             // throw invalid register error
+            throw new InvalidRegisterException(pcToFc.get(gProgramCounter), p.reg_1, p.reg_2);
         }
-        instructionTypes.set(gProgramCounter, 'R');
         p.imm_.accept(new ImmVisitor(), arg);
         return null;
     }    public String visit(grammar.Absyn.ESrl p, Object arg)
@@ -246,8 +247,8 @@ public class Preprocessor
         if (!registerRegex.matcher(p.reg_2).matches()) validRegister = false;
         if (!validRegister){
             // throw invalid register error
+            throw new InvalidRegisterException(pcToFc.get(gProgramCounter), p.reg_1, p.reg_2);
         }
-        instructionTypes.set(gProgramCounter, 'R');
         p.imm_.accept(new ImmVisitor(), arg);
         return null;
     }    public String visit(grammar.Absyn.ESlt p, Object arg)
@@ -260,8 +261,8 @@ public class Preprocessor
         if (!registerRegex.matcher(p.reg_2).matches()) validRegister = false;
         if (!validRegister){
             // throw invalid register error
+            throw new InvalidRegisterException(pcToFc.get(gProgramCounter), p.reg_1, p.reg_2, p.reg_3);
         }
-        instructionTypes.set(gProgramCounter, 'R');
         return null;
     }    public String visit(grammar.Absyn.EJr p, Object arg)
     { /* Code For EJr Goes Here */
@@ -270,8 +271,8 @@ public class Preprocessor
         if (!registerRegex.matcher(p.reg_).matches()) validRegister = false;
         if (!validRegister){
             // throw invalid register error
+            throw new InvalidRegisterException(pcToFc.get(gProgramCounter), p.reg_);
         }
-        instructionTypes.set(gProgramCounter, 'R');
         return null;
     }
     }
@@ -286,8 +287,8 @@ public class Preprocessor
             if (!registerRegex.matcher(p.reg_2).matches()) validRegister = false;
             if (!validRegister){
                 // throw invalid register error
+                throw new InvalidRegisterException(pcToFc.get(gProgramCounter), p.reg_1, p.reg_2);
             }
-            instructionTypes.set(gProgramCounter, 'I');
             p.imm_.accept(new ImmVisitor(), arg);
             return null;
         }    public String visit(grammar.Absyn.EOri p, Object arg)
@@ -299,8 +300,8 @@ public class Preprocessor
         if (!registerRegex.matcher(p.reg_2).matches()) validRegister = false;
         if (!validRegister){
             // throw invalid register error
+            throw new InvalidRegisterException(pcToFc.get(gProgramCounter), p.reg_1, p.reg_2);
         }
-        instructionTypes.set(gProgramCounter, 'I');
         p.imm_.accept(new ImmVisitor(), arg);
         return null;
     }    public String visit(grammar.Absyn.EAndi p, Object arg)
@@ -312,8 +313,8 @@ public class Preprocessor
         if (!registerRegex.matcher(p.reg_2).matches()) validRegister = false;
         if (!validRegister){
             // throw invalid register error
+            throw new InvalidRegisterException(pcToFc.get(gProgramCounter), p.reg_1, p.reg_2);
         }
-        instructionTypes.set(gProgramCounter, 'I');
         p.imm_.accept(new ImmVisitor(), arg);
         return null;
     }    public String visit(grammar.Absyn.ESlti p, Object arg)
@@ -325,8 +326,8 @@ public class Preprocessor
         if (!registerRegex.matcher(p.reg_2).matches()) validRegister = false;
         if (!validRegister){
             // throw invalid register error
+            throw new InvalidRegisterException(pcToFc.get(gProgramCounter), p.reg_1, p.reg_2);
         }
-        instructionTypes.set(gProgramCounter, 'I');
         p.imm_.accept(new ImmVisitor(), arg);
         return null;
     }    public String visit(grammar.Absyn.EBne p, Object arg)
@@ -338,8 +339,8 @@ public class Preprocessor
         if (!registerRegex.matcher(p.reg_2).matches()) validRegister = false;
         if (!validRegister){
             // throw invalid register error
+            throw new InvalidRegisterException(pcToFc.get(gProgramCounter), p.reg_1, p.reg_2);
         }
-        instructionTypes.set(gProgramCounter, 'I');
         p.pcpntr_.accept(new PCPntrVisitor(), arg);
         return null;
     }    public String visit(grammar.Absyn.EBeq p, Object arg)
@@ -351,8 +352,8 @@ public class Preprocessor
         if (!registerRegex.matcher(p.reg_2).matches()) validRegister = false;
         if (!validRegister){
             // throw invalid register error
+            throw new InvalidRegisterException(pcToFc.get(gProgramCounter), p.reg_1, p.reg_2);
         }
-        instructionTypes.set(gProgramCounter, 'I');
         p.pcpntr_.accept(new PCPntrVisitor(), arg);
         return null;
     }    public String visit(grammar.Absyn.ELui p, Object arg)
@@ -362,8 +363,8 @@ public class Preprocessor
         if (!registerRegex.matcher(p.reg_).matches()) validRegister = false;
         if (!validRegister){
             // throw invalid register error
+            throw new InvalidRegisterException(pcToFc.get(gProgramCounter), p.reg_);
         }
-        instructionTypes.set(gProgramCounter, 'I');
         p.imm_.accept(new ImmVisitor(), arg);
         return null;
     }    public String visit(grammar.Absyn.ESw p, Object arg)
@@ -373,8 +374,8 @@ public class Preprocessor
         if (!registerRegex.matcher(p.reg_).matches()) validRegister = false;
         if (!validRegister){
             // throw invalid register error
+            throw new InvalidRegisterException(pcToFc.get(gProgramCounter), p.reg_);
         }
-        instructionTypes.set(gProgramCounter, 'I');
         p.addr_.accept(new AddrVisitor(), arg);
         return null;
     }    public String visit(grammar.Absyn.ELw p, Object arg)
@@ -384,8 +385,9 @@ public class Preprocessor
         if (!registerRegex.matcher(p.reg_).matches()) validRegister = false;
         if (!validRegister){
             // throw invalid register error
+            throw new InvalidRegisterException(pcToFc.get(gProgramCounter), p.reg_);
         }
-        instructionTypes.set(gProgramCounter, 'I');
+
         p.addr_.accept(new AddrVisitor(), arg);
         return null;
     }
@@ -394,7 +396,6 @@ public class Preprocessor
     {
         public String visit(grammar.Absyn.EJ p, Object arg)
         { /* Code For EJ Goes Here */
-            instructionTypes.set(gProgramCounter, 'J');
             p.pcpntr_.accept(new PCPntrVisitor(), arg);
             return null;
         }
@@ -407,14 +408,17 @@ public class Preprocessor
             return null;
         }    public String visit(grammar.Absyn.ERInstr p, Object arg)
     { /* Code For ERInstr Goes Here */
+        instructionTypes.set(gProgramCounter, 'R');
         p.rinstr_.accept(new RInstrVisitor(), arg);
         return null;
     }    public String visit(grammar.Absyn.EIInstr p, Object arg)
     { /* Code For EIInstr Goes Here */
+        instructionTypes.set(gProgramCounter, 'I');
         p.iinstr_.accept(new IInstrVisitor(), arg);
         return null;
     }    public String visit(grammar.Absyn.EJInstr p, Object arg)
     { /* Code For EJInstr Goes Here */
+        instructionTypes.set(gProgramCounter, 'J');
         p.jinstr_.accept(new JInstrVisitor(), arg);
         return null;
     }
