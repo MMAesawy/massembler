@@ -28,7 +28,6 @@ public class Interpreter
     private PrintStream errorStream;
     private grammar.Absyn.Program parsedProgram;
 
-
     public Interpreter(Massembler ass, InputStreamReader in) throws IOException{
         this(ass, in, null, null);
     }
@@ -157,7 +156,7 @@ public class Interpreter
         { /* Code For OffRel Goes Here */
             //p.integer_;
             //p.reg_;
-            Register r1 = assembler.regs[Register.lookup(p.reg_)];
+            Register r1 = assembler.registers[Register.lookup(p.reg_)];
             return p.integer_ + r1.value;
             //return null;
         }
@@ -212,9 +211,9 @@ public class Interpreter
             //p.reg_2;
             //p.reg_3;
 
-            Register r1 = assembler.regs[Register.lookup(p.reg_1)];
-            Register r2 = assembler.regs[Register.lookup(p.reg_2)];
-            Register r3 = assembler.regs[Register.lookup(p.reg_3)];
+            Register r1 = assembler.registers[Register.lookup(p.reg_1)];
+            Register r2 = assembler.registers[Register.lookup(p.reg_2)];
+            Register r3 = assembler.registers[Register.lookup(p.reg_3)];
             assembler.add(r1, r2, r3);
             return null;
         }    public String visit(grammar.Absyn.ESub p, Object arg)
@@ -222,9 +221,9 @@ public class Interpreter
         //p.reg_1;
         //p.reg_2;
         //p.reg_3;
-        Register r1 = assembler.regs[Register.lookup(p.reg_1)];
-        Register r2 = assembler.regs[Register.lookup(p.reg_2)];
-        Register r3 = assembler.regs[Register.lookup(p.reg_3)];
+        Register r1 = assembler.registers[Register.lookup(p.reg_1)];
+        Register r2 = assembler.registers[Register.lookup(p.reg_2)];
+        Register r3 = assembler.registers[Register.lookup(p.reg_3)];
         assembler.sub(r1, r2, r3);
         return null;
     }    public String visit(grammar.Absyn.EAnd p, Object arg)
@@ -232,9 +231,9 @@ public class Interpreter
         //p.reg_1;
         //p.reg_2;
         //p.reg_3;
-        Register r1 = assembler.regs[Register.lookup(p.reg_1)];
-        Register r2 = assembler.regs[Register.lookup(p.reg_2)];
-        Register r3 = assembler.regs[Register.lookup(p.reg_3)];
+        Register r1 = assembler.registers[Register.lookup(p.reg_1)];
+        Register r2 = assembler.registers[Register.lookup(p.reg_2)];
+        Register r3 = assembler.registers[Register.lookup(p.reg_3)];
         assembler.and(r1, r2, r3);
         return null;
     }    public String visit(grammar.Absyn.EOr p, Object arg)
@@ -242,9 +241,9 @@ public class Interpreter
         //p.reg_1;
         //p.reg_2;
         //p.reg_3;
-        Register r1 = assembler.regs[Register.lookup(p.reg_1)];
-        Register r2 = assembler.regs[Register.lookup(p.reg_2)];
-        Register r3 = assembler.regs[Register.lookup(p.reg_3)];
+        Register r1 = assembler.registers[Register.lookup(p.reg_1)];
+        Register r2 = assembler.registers[Register.lookup(p.reg_2)];
+        Register r3 = assembler.registers[Register.lookup(p.reg_3)];
         assembler.or(r1, r2, r3);
         return null;
     }    public String visit(grammar.Absyn.ESll p, Object arg)
@@ -253,8 +252,8 @@ public class Interpreter
         //p.reg_2;
 
         int imm = p.imm_.accept(new ImmVisitor(), arg);
-        Register r1 = assembler.regs[Register.lookup(p.reg_1)];
-        Register r2 = assembler.regs[Register.lookup(p.reg_2)];
+        Register r1 = assembler.registers[Register.lookup(p.reg_1)];
+        Register r2 = assembler.registers[Register.lookup(p.reg_2)];
         assembler.sll(r1, r2, imm);
         return null;
     }    public String visit(grammar.Absyn.ESrl p, Object arg)
@@ -263,8 +262,8 @@ public class Interpreter
         //p.reg_2;
 
         int imm = p.imm_.accept(new ImmVisitor(), arg);
-        Register r1 = assembler.regs[Register.lookup(p.reg_1)];
-        Register r2 = assembler.regs[Register.lookup(p.reg_2)];
+        Register r1 = assembler.registers[Register.lookup(p.reg_1)];
+        Register r2 = assembler.registers[Register.lookup(p.reg_2)];
         assembler.srl(r1, r2, imm);
         return null;
     }    public String visit(grammar.Absyn.ESlt p, Object arg)
@@ -273,15 +272,15 @@ public class Interpreter
         //p.reg_2;
         //p.reg_3;
 
-        Register r1 = assembler.regs[Register.lookup(p.reg_1)];
-        Register r2 = assembler.regs[Register.lookup(p.reg_2)];
-        Register r3 = assembler.regs[Register.lookup(p.reg_3)];
+        Register r1 = assembler.registers[Register.lookup(p.reg_1)];
+        Register r2 = assembler.registers[Register.lookup(p.reg_2)];
+        Register r3 = assembler.registers[Register.lookup(p.reg_3)];
         assembler.slt(r1, r2, r3);
         return null;
     }    public String visit(grammar.Absyn.EJr p, Object arg)
     { /* Code For EJr Goes Here */
         //p.reg_;
-        Register r1 = assembler.regs[Register.lookup(p.reg_)];
+        Register r1 = assembler.registers[Register.lookup(p.reg_)];
         assembler.jr(r1);
         return null;
     }
@@ -294,8 +293,8 @@ public class Interpreter
             //p.reg_2;
 
             int imm = p.imm_.accept(new ImmVisitor(), arg);
-            Register r1 = assembler.regs[Register.lookup(p.reg_1)];
-            Register r2 = assembler.regs[Register.lookup(p.reg_2)];
+            Register r1 = assembler.registers[Register.lookup(p.reg_1)];
+            Register r2 = assembler.registers[Register.lookup(p.reg_2)];
             assembler.addi(r1, r2, imm);
             return null;
         }    public String visit(grammar.Absyn.EOri p, Object arg)
@@ -304,8 +303,8 @@ public class Interpreter
         //p.reg_2;
 
         int imm = p.imm_.accept(new ImmVisitor(), arg);
-        Register r1 = assembler.regs[Register.lookup(p.reg_1)];
-        Register r2 = assembler.regs[Register.lookup(p.reg_2)];
+        Register r1 = assembler.registers[Register.lookup(p.reg_1)];
+        Register r2 = assembler.registers[Register.lookup(p.reg_2)];
         assembler.ori(r1, r2, imm);
         return null;
     }    public String visit(grammar.Absyn.EAndi p, Object arg)
@@ -314,8 +313,8 @@ public class Interpreter
         //p.reg_2;
 
         int imm = p.imm_.accept(new ImmVisitor(), arg);
-        Register r1 = assembler.regs[Register.lookup(p.reg_1)];
-        Register r2 = assembler.regs[Register.lookup(p.reg_2)];
+        Register r1 = assembler.registers[Register.lookup(p.reg_1)];
+        Register r2 = assembler.registers[Register.lookup(p.reg_2)];
         assembler.andi(r1, r2, imm);
         return null;
     }    public String visit(grammar.Absyn.ESlti p, Object arg)
@@ -324,8 +323,8 @@ public class Interpreter
         //p.reg_2;
 
         int imm = p.imm_.accept(new ImmVisitor(), arg);
-        Register r1 = assembler.regs[Register.lookup(p.reg_1)];
-        Register r2 = assembler.regs[Register.lookup(p.reg_2)];
+        Register r1 = assembler.registers[Register.lookup(p.reg_1)];
+        Register r2 = assembler.registers[Register.lookup(p.reg_2)];
         assembler.slti(r1, r2, imm);
         return null;
     }    public String visit(grammar.Absyn.EBne p, Object arg)
@@ -334,9 +333,9 @@ public class Interpreter
         //p.reg_2;
 
         int pntr = p.pcpntr_.accept(new PCPntrVisitor(), arg);
-        Register r1 = assembler.regs[Register.lookup(p.reg_1)];
-        Register r2 = assembler.regs[Register.lookup(p.reg_2)];
-        assembler.bne(r1, r2, pntr);
+        Register r1 = assembler.registers[Register.lookup(p.reg_1)];
+        Register r2 = assembler.registers[Register.lookup(p.reg_2)];
+        assembler.bne(r1, r2, pntr - assembler.programCounter);
         return null;
     }    public String visit(grammar.Absyn.EBeq p, Object arg)
     { /* Code For EBeq Goes Here */
@@ -344,16 +343,16 @@ public class Interpreter
         //p.reg_2;
 
         int pntr = p.pcpntr_.accept(new PCPntrVisitor(), arg);
-        Register r1 = assembler.regs[Register.lookup(p.reg_1)];
-        Register r2 = assembler.regs[Register.lookup(p.reg_2)];
-        assembler.bne(r1, r2, pntr);
+        Register r1 = assembler.registers[Register.lookup(p.reg_1)];
+        Register r2 = assembler.registers[Register.lookup(p.reg_2)];
+        assembler.beq(r1, r2, pntr - assembler.programCounter);
         return null;
     }    public String visit(grammar.Absyn.ELui p, Object arg)
     { /* Code For ELui Goes Here */
         //p.reg_;
 
         int imm = p.imm_.accept(new ImmVisitor(), arg);
-        Register r1 = assembler.regs[Register.lookup(p.reg_)];
+        Register r1 = assembler.registers[Register.lookup(p.reg_)];
         assembler.lui(r1, imm);
         return null;
     }    public String visit(grammar.Absyn.ESw p, Object arg)
@@ -361,7 +360,7 @@ public class Interpreter
         //p.reg_;
 
         int addr = p.addr_.accept(new AddrVisitor(), arg);
-        Register r1 = assembler.regs[Register.lookup(p.reg_)];
+        Register r1 = assembler.registers[Register.lookup(p.reg_)];
         assembler.sw(r1, addr);
         return null;
     }    public String visit(grammar.Absyn.ELw p, Object arg)
@@ -369,7 +368,7 @@ public class Interpreter
         //p.reg_;
 
         int addr = p.addr_.accept(new AddrVisitor(), arg);
-        Register r1 = assembler.regs[Register.lookup(p.reg_)];
+        Register r1 = assembler.registers[Register.lookup(p.reg_)];
         assembler.lw(r1, addr);
         return null;
     }
@@ -388,7 +387,7 @@ public class Interpreter
     {
         public String visit(grammar.Absyn.ESyscall p, Object arg)
         { /* Code For ESyscall Goes Here */
-            
+
             return null;
         }    public String visit(grammar.Absyn.ERInstr p, Object arg)
     { /* Code For ERInstr Goes Here */

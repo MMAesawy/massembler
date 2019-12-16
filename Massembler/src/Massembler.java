@@ -3,13 +3,23 @@
 public class Massembler {
 
     Memory mem = new Memory();
-
-    //array of registers
-    Register[] regs = new Register[32];
-
-
     //program counter in order to help us jumping in the program
     int programCounter = 0;
+    //array of registers
+    Register[] registers = new Register[32];
+    //constructor
+    public Massembler(){
+        for(int i = 0; i< registers.length;i++){
+            registers[i] = new Register();
+        }
+    }
+
+    public void reset(){
+        programCounter = 0;
+        for(int i = 0; i< registers.length;i++){
+            registers[i].set(0);
+        }
+    }
 
     public void add(Register rd, Register rs, Register rt){
         rd.value = rs.value + rt.value;
@@ -21,25 +31,28 @@ public class Massembler {
         programCounter+=1;
     }
 
-    public void slt(Register rs, Register rt){
+    public void slt(Register d, Register s, Register t){
         programCounter+=1;
-        //rs.value < rt.value ? 1:0;
+        if(s.get() < t.get()){
+            d.set(1);
+        }
+        else
+            d.set(0);
+
     }
 
     public void and(Register rd, Register rs, Register rt){
         programCounter+=1;
-        rd.setNumber(rs.getNumber() & rt.getNumber());
+        rd.set(rs.get() & rt.get());
 
     }
 
-    public void slti(Register rs, int imm){
-        //if $s < $t $d = 1
-        Register t = null;
-        if(rs.getNumber() < imm)
-            //t = 1
-            t.setNumber(1);
+    public void slti(Register t, Register s, int imm){
+
+        if(s.get() < imm)
+            t.set(1);
         else{
-            t.setNumber(0);
+            t.set(0);
         }
         programCounter+=1;
 
@@ -47,7 +60,7 @@ public class Massembler {
 
     public void or(Register rd, Register rs, Register rt){
         programCounter+=1;
-        rd.setNumber(rs.getNumber() | rt.getNumber());
+        rd.set(rs.get() | rt.get());
     }
 
     public void addi(Register rd, Register rs, int imm){
@@ -58,26 +71,64 @@ public class Massembler {
     public void andi(Register rd, Register rs, int imm){
         programCounter+=1;
 
-        rd.setNumber(rs.getNumber() & imm);
+        rd.set(rs.get() & imm);
 
     }
 
     public void ori(Register rd, Register rs, int imm){
         programCounter+=1;
-        rd.setNumber(1);
+        rd.set(1);
         if(rs.value == 1 || imm == 1)
-            rd.setNumber(1);
+            rd.set(1);
 
     }
 
-    public void lw(Register reg1, int addr){
-
-        reg1.setNumber(mem.get(addr));
+    public void lw(Register reg1, int address){
+        programCounter+=1;
+        reg1.set(mem.get(address));
     }
 
     public void sw(Register reg1, int address){
-
-        mem.set(address, reg1.getNumber());
+        programCounter+=1;
+        mem.set(address, reg1.get());
     }
 
+    public void lui(Register t, int imm){
+        programCounter+=1;
+        t.set(imm<<16);
+    }
+
+    public void sll(Register d, Register t, int h){
+        programCounter+=1;
+        d.set(t.get()<<h);
+    }
+
+    public void srl(Register d, Register t, int h){
+        programCounter+=1;
+        d.set(t.get()>>h);
+    }
+
+    public void beq(Register s, Register t, int offset){
+        if(s.get() == t.get()){
+            programCounter += offset;
+        }
+        else
+            programCounter +=1;
+    }
+
+    public void bne(Register s, Register t, int offset){
+        if(s.get() != t.get()){
+            programCounter += offset;
+        }
+        else
+            programCounter +=1;
+
+    }
+    public void j(int target){
+        programCounter = target;
+
+    }
+    public void jr(Register s){
+        programCounter = s.get();
+    }
 }
