@@ -10,7 +10,7 @@ public class Massembler {
     //constructor
     public Massembler(){
         for(int i = 0; i< registers.length;i++){
-            registers[i] = new Register();
+            registers[i] = new Register(Register.reverseLookup(i));
         }
     }
 

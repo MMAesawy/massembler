@@ -1,9 +1,15 @@
 
 public class Register {
+    public String getName() {
+        return name;
+    }
+
+    private String name;
     int value;
-    public Register(){
+    public Register(String n){
         //Sets the value to zero whenever an instance is initialized.
         setValue(0);
+        name = n;
     }
     public int getValue() {
         return this.value;

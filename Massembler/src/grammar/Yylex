@@ -47,12 +47,7 @@ IDENT = ({LETTER}|{DIGIT}|['_])
 <YYINITIAL>sub { return new Symbol(sym._SYMB_20); }
 <YYINITIAL>sw { return new Symbol(sym._SYMB_21); }
 <YYINITIAL>syscall { return new Symbol(sym._SYMB_22); }
-<YYINITIAL>"//"[^\n]*\n { /* BNFC single-line comment */ }
-<YYINITIAL>"/*" { yybegin(COMMENT); }
-<COMMENT>"*/" { yybegin(YYINITIAL); }
-<COMMENT>. { }
-<COMMENT>[\n] { }
-
+<YYINITIAL>"#"[^\n]*\n { /* BNFC single-line comment */ }
 
 <YYINITIAL>\$([tvsak]?{DIGIT}|at|gp|sp|fp|ra) { return new Symbol(sym.Reg, yytext().intern()); }
 <YYINITIAL>{LETTER}({DIGIT}|{LETTER}|_)* { return new Symbol(sym.LineLabel, yytext().intern()); }

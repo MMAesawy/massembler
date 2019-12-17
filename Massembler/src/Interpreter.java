@@ -33,7 +33,7 @@ public class Interpreter
     private int destination = 0;
     private int prevProgCount = 0;
 
-    public Interpreter(Massembler ass, InputStreamReader in) throws IOException{
+    public Interpreter(Massembler ass, InputStream in) throws IOException{
         this(ass, in, null, null);
     }
 
@@ -42,10 +42,11 @@ public class Interpreter
     }
 
     public Interpreter(Massembler ass, String in, PrintStream output, PrintStream error) throws IOException{
-        this(ass, new InputStreamReader(new ByteArrayInputStream(in.getBytes())), output, error);
+        this(ass,new ByteArrayInputStream(in.getBytes()), output, error);
     }
 
-    public Interpreter(Massembler ass, InputStreamReader in, PrintStream output, PrintStream error) throws IOException {
+    public Interpreter(Massembler ass, InputStream in, PrintStream output, PrintStream error) throws IOException {
+        InputStreamReader reader = new InputStreamReader(in);
         assembler = ass;
         preprocessor = new Preprocessor();
         outputStream = output;
@@ -76,7 +77,7 @@ public class Interpreter
         // Preprocess
         in.reset();
         try{
-            preprocessor.initialPass(in);
+            preprocessor.initialPass(reader);
             preprocessor.preprocess(parsedProgram);
             if (outputStream != null) {
                 outputStream.println("[Preprocessing successful]");
@@ -95,7 +96,7 @@ public class Interpreter
             }
         }
 
-        counterMax = preprocessor.pcToFc.size() + 1; // assuming pcToFc extends to end of program
+        counterMax = preprocessor.pcToFc.size(); // assuming pcToFc extends to end of program
     }
 
     //public char getInstructionType(int instructionNumber){

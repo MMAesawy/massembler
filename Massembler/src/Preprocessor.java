@@ -36,39 +36,29 @@ public class Preprocessor
         String label = null;
         Pattern whitespaceLabelRegex = Pattern.compile("\\s*([A-Za-z]\\w*\\s*:\\s*)?"); // recursive matcher, only use on whole string
         Pattern labelRegex = Pattern.compile("([A-Za-z]\\w*)\\s*:");
-        boolean onComment = false;
         while (reader.ready()){
             String line = reader.readLine();
-            if (onComment){
-                if (line.contains("*/")) {
-                    onComment = false;
-                }
-                line = line.substring(line.indexOf("*/"));
+
+            int commentIdx = line.indexOf("#");
+            if (commentIdx >= 0)
+                line = line.substring(0, commentIdx); // ignore comments
+
+            // If there is a label, put it in the label lookup table
+            Matcher match = labelRegex.matcher(line);
+            if (match.find()) {
+                label = match.group(1);
             }
 
-            if (!onComment) {
-                line = line.substring(0, line.indexOf("//")); // ignore comments
-                if (line.contains("/*")) {
-                    onComment = true;
+            // If the line actually contains an instruction
+            if (!whitespaceLabelRegex.matcher(line).matches()) {
+                if (label != null) {
+                    labelLookup.put(label, programCounter);
+                    label = null;
                 }
-                line = line.substring(0, line.indexOf("/*")); // ignore multiline comment starts
-
-                // If there is a label, put it in the label lookup table
-                Matcher match = labelRegex.matcher(line);
-                if (match.find()) {
-                    label = match.group(1);
-                }
-
-                // If the line actually contains an instruction
-                if (!whitespaceLabelRegex.matcher(line).matches()) {
-                    if (label != null) {
-                        labelLookup.put(label, programCounter);
-                        label = null;
-                    }
-                    pcToFc.add(fileCounter);
-                    programCounter++;
-                }
+                pcToFc.add(fileCounter);
+                programCounter++;
             }
+
             fileCounter++;
         }
         instructionTypes.ensureCapacity(programCounter);
@@ -404,21 +394,21 @@ public class Preprocessor
     {
         public String visit(grammar.Absyn.ESyscall p, Object arg)
         { /* Code For ESyscall Goes Here */
-            instructionTypes.set(gProgramCounter, 'B'); // B as in interrupt/breakpoint
+//            instructionTypes.set(gProgramCounter, 'B'); // B as in interrupt/breakpoint
             return null;
         }    public String visit(grammar.Absyn.ERInstr p, Object arg)
     { /* Code For ERInstr Goes Here */
-        instructionTypes.set(gProgramCounter, 'R');
+//        instructionTypes.set(gProgramCounter, 'R');
         p.rinstr_.accept(new RInstrVisitor(), arg);
         return null;
     }    public String visit(grammar.Absyn.EIInstr p, Object arg)
     { /* Code For EIInstr Goes Here */
-        instructionTypes.set(gProgramCounter, 'I');
+//        instructionTypes.set(gProgramCounter, 'I');
         p.iinstr_.accept(new IInstrVisitor(), arg);
         return null;
     }    public String visit(grammar.Absyn.EJInstr p, Object arg)
     { /* Code For EJInstr Goes Here */
-        instructionTypes.set(gProgramCounter, 'J');
+//        instructionTypes.set(gProgramCounter, 'J');
         p.jinstr_.accept(new JInstrVisitor(), arg);
         return null;
     }
