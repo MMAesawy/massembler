@@ -19,6 +19,7 @@ public class Massembler {
         for(int i = 0; i< registers.length;i++){
             registers[i].setValue(0);
         }
+        mem = new Memory();
     }
 
     public void add(Register rd, Register rs, Register rt){
@@ -27,7 +28,7 @@ public class Massembler {
     }
 
     public void sub(Register rd, Register rs, Register rt){
-        rd.setValue(rs.getValue() + rt.getValue());
+        rd.setValue(rs.getValue() - rt.getValue());
         programCounter+=1;
     }
 

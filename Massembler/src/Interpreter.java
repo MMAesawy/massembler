@@ -31,7 +31,10 @@ public class Interpreter
     private String register3 = "";
     private int immediate = 0;
     private int destination = 0;
-    private int prevProgCount = 0;
+    private int prevProgCount = -1;
+
+    private int jumpsExecuted = 0;
+    private int jumpLimit = 128;
 
     public Interpreter(Massembler ass, InputStream in) throws IOException{
         this(ass, in, null, null);
@@ -104,7 +107,9 @@ public class Interpreter
     //}
 
     public int getLineNumber(int instructionNumber){
-        return preprocessor.pcToFc.get(instructionNumber);
+        if (instructionNumber < preprocessor.pcToFc.size())
+            return preprocessor.pcToFc.get(instructionNumber);
+        return -1;
     }
 
     public int getLineNumber(){
@@ -184,10 +189,24 @@ public class Interpreter
         { /* Code For PDefs Goes Here */
             while (assembler.programCounter < counterMax)
             {
+                if (prevProgCount != assembler.programCounter-1)
+                    jumpsExecuted++;
                 resetInfo();
                 prevProgCount = assembler.programCounter;
                 p.liststmt_.get(assembler.programCounter).accept(new StmtVisitor(), arg);
                 if (single) break;
+                if (jumpsExecuted > jumpLimit){
+
+                    if (errorStream != null)
+                        errorStream.println("Jump limit reached. Possibly infinite loop encountered. Ending...");
+                    errorFlag = true;
+                    break;
+                }
+            }
+            if (assembler.programCounter >= counterMax){
+                if (outputStream != null){
+                    outputStream.println("Reached end of program... Ending...");
+                }
             }
             return null;
         }
