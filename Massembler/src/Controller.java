@@ -14,6 +14,7 @@ import javafx.stage.Stage;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -21,6 +22,7 @@ public class Controller
 {
     Massembler massembler;
     Interpreter interpreter;
+    boolean runningMode = false;
 //    int progCount;
 
 
@@ -50,6 +52,8 @@ public class Controller
     private Text progCountText;
     @FXML
     private Text lineCountText;
+    @FXML
+    private TextArea terminal;
 
 
     @FXML
@@ -65,6 +69,7 @@ public class Controller
     @FXML
     private TableView<MemoryEntry> memoryView;
 
+    private TerminalStream outputTerminal;
 
 
     // Add a public no-args constructor
@@ -104,6 +109,16 @@ public class Controller
 
         mnameColumn.setMinWidth(120);
         mvalueColumn.setMinWidth(120);
+
+        outputTerminal = new TerminalStream();
+    }
+
+
+
+    private void updateTerminal(){
+        if (outputTerminal != null){
+            terminal.setText(outputTerminal.toString());
+        }
     }
 
     @FXML
@@ -122,9 +137,7 @@ public class Controller
 
     @FXML
     private void onStopButton(){
-        interpreter = null;
-        inputArea.setEditable(true);
-        editornotText.setText("Editing mode");
+        switchToEdit();
     }
 
     @FXML
@@ -135,6 +148,7 @@ public class Controller
     @FXML
     private void onLoadClick() throws IOException {
         FileChooser fileChooser = new FileChooser();
+        fileChooser.setInitialDirectory(new File(Paths.get(".").toAbsolutePath().normalize().toString()));
         File selectedFile = fileChooser.showOpenDialog(new Stage());
         InputStream stream = new FileInputStream(selectedFile);
         StringBuilder builder = new StringBuilder();
@@ -153,39 +167,65 @@ public class Controller
 
     @FXML
     private void onExecuteClick() throws IOException {
-        if (interpreter == null){
-            String lines = inputArea.getText() + "\n";
-            massembler = new Massembler();
-            interpreter = new Interpreter(massembler, lines, System.out, System.out);
-            regView.getItems().clear();
-            memoryView.getItems().clear();
-            highlightNext();
+        if(!runningMode){
+            switchToRunning();
+            updateViews();
         }
-        inputArea.setEditable(false);
-        editornotText.setText("Compiling mode");
-        interpreter.interpretNext();
-        regView.getItems().addAll(interpreter.assembler.registers);
-        memoryView.getItems().addAll(massembler.mem.memory);
-        updateText();
-        highlightNext();
+        else{
+            interpreter.interpretNext();
+            updateViews();
+        }
+
+        if (interpreter != null && !interpreter.ready()){
+            switchToEdit();
+        }
     }
 
     @FXML
     private void onRunClick() throws IOException {
-        if (interpreter == null){
-            String lines = inputArea.getText() + "\n";
-            massembler = new Massembler();
-            interpreter = new Interpreter(massembler, lines, System.out, System.out);
-            regView.getItems().clear();
-            memoryView.getItems().clear();
-            updateText();
-            highlightNext();
+        if (!runningMode){
+            switchToRunning();
+            interpreter.interpretAll();
+            updateViews();
         }
-        interpreter.interpretAll();
-        regView.getItems().addAll(interpreter.assembler.registers);
-        memoryView.getItems().addAll(massembler.mem.memory);
-        updateText();
-        highlightNext();
+        else {
+            interpreter.interpretAll();
+            updateViews();
+        }
+
+        if (interpreter != null && !interpreter.ready()){
+            switchToEdit();
+        }
+     }
+
+     private void updateViews(){
+         regView.getItems().clear();
+         regView.getItems().addAll(interpreter.assembler.registers);
+         memoryView.getItems().clear();
+         memoryView.getItems().addAll(massembler.mem.memory);
+         updateText();
+         highlightNext();
+         updateTerminal();
+     }
+
+     private void switchToRunning() throws IOException{
+        runningMode = true;
+        String lines = inputArea.getText() + "\n";
+        inputArea.setEditable(false);
+        massembler = new Massembler();
+        outputTerminal = new TerminalStream();
+        PrintStream stream = new PrintStream(outputTerminal);
+        interpreter = new Interpreter(massembler, lines, stream, stream);
+         editornotText.setText("Running Mode");
+
+     }
+
+     private void switchToEdit(){
+        runningMode = false;
+        interpreter = null;
+        //massembler.reset();
+        inputArea.setEditable(true);
+        editornotText.setText("Editing Mode");
      }
 
 }
