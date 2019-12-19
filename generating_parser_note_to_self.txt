@@ -1,3 +1,0 @@
-use make from msys2
-make msys2 inherit windows path using
-	.\msys2_shell.cmd -use-full-path
